@@ -29,11 +29,14 @@ import matplotlib.pyplot as plt
 import pyinspect
 
 # Find the functions you're looking for
-funcs = pyinspect.find(plt, name='subplot')
+funcs = pyinspect.search(plt, name='subplot')
 ```
 
 This results in:
 <img src='media/find_matplotlib.png' width=800px></img>
+
+**note**: search also looks for functions in sub-modules of the module found.
+e.g.  `search(matplotlib...)` will look for methods across the entire `matplotlib` library!
 
 \
 `pyinspect.find` can also be used to find class attributes. For example,
@@ -47,14 +50,16 @@ from rich.console import Console
 import pyinspect
 
 # find class methods
-methods = pyinspect.find(Console, 'export')
-
-
+methods = pyinspect.search(Console, 'export')
 ```
 
 Which gives:
 <img src='media/find_rich.png' width=800px></img>
 
+
+**note**: search also looks for methods matching your query 
+among the parents of the `class` you passed. Pass `include_parents=False`
+when calling `search` to restrict the search to just the class you've passed.
 
 **PRO TIP:** if you don't pass a search string (e.g. `pyinspect.find(Console)`), `pyinspect.find` will print **all** functions and methods.
 

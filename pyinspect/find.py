@@ -61,7 +61,6 @@ def search_class_method(
         table.add_column("name", style="bold green")
         table.add_column("Module", justify="center")
         table.add_column("Class", justify="center", style="bold green")
-        table.add_column("Is Parent", justify="center")
         table.add_column("Line #", justify="center")
         table.add_column("Source", style="dim")
 
@@ -77,18 +76,18 @@ def search_class_method(
                 lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
                 class_obj = get_class_that_defined_method(v)
 
-                is_parent = (
-                    "[green]:heavy_check_mark:[/green]"
-                    if obj == class_obj
-                    else ""
-                )
+                # is_parent = (
+                #     "[green]:heavy_check_mark:[/green]"
+                #     if obj == class_obj
+                #     else ""
+                # )
 
                 table.add_row(
                     str(n),
                     k,
                     v.__module__,
                     class_obj.__name__,
-                    is_parent,
+                    # is_parent,
                     str(lineno),
                     source,
                 )
@@ -100,7 +99,7 @@ def search_class_method(
     return found
 
 
-def search_module_function(module, name="", print_table=True):
+def search_module_function(module, name="", print_table=True, **kwargs):
     """
         Given a module (e.g. matplotlib.pyplot) finds all the functions
         in it whose name includes the given search string.
@@ -111,13 +110,19 @@ def search_module_function(module, name="", print_table=True):
 
         :returns: dict with all the functions found 
     """
+    try:
+        path = module.__path__
+    except Exception:
+        path = [inspect.getfile(module)]
+
     modules = {module.__name__: module}
     for importer, modname, ispkg in pkgutil.walk_packages(
-        path=module.__path__,
-        prefix=module.__name__ + ".",
-        onerror=lambda x: None,
+        path=path, prefix=module.__name__ + ".", onerror=lambda x: None,
     ):
-        modules[modname] = importlib.import_module(modname)
+        try:
+            modules[modname] = importlib.import_module(modname)
+        except (ImportError, OSError):
+            pass
 
     # grab all function names that contain `name` from the module
     p = ".*{}.*".format(name)
@@ -165,7 +170,7 @@ def search_module_function(module, name="", print_table=True):
     }
 
 
-def search(obj, name="", print_table=True):
+def search(obj, name="", print_table=True, **kwargs):
     """
         General find function, handles both
         find in classes and find in module
@@ -175,6 +180,10 @@ def search(obj, name="", print_table=True):
         :param print_table: bool, optional. If True it prints a table with all the found items
     """
     if inspect.isclass(obj):
-        return search_class_method(obj, name=name, print_table=print_table)
+        return search_class_method(
+            obj, name=name, print_table=print_table, **kwargs
+        )
     else:
-        return search_module_function(obj, name=name, print_table=print_table)
+        return search_module_function(
+            obj, name=name, print_table=print_table, **kwargs
+        )
