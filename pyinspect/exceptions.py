@@ -7,6 +7,7 @@ from rich import print
 from rich.console import Console
 from rich.style import Style
 from rich.theme import Theme
+import numpy as np
 
 from pyinspect.utils import timestamp
 
@@ -14,7 +15,12 @@ from pyinspect.utils import timestamp
 rich.default_styles.DEFAULT_STYLES["scope.border"] = Style(color="green")
 
 
-def inspect_traceback(tb):
+def inspect_traceback(tb, skip_frame=1):
+    """
+        Get the whole traceback stack with 
+        locals at each frame and expand the local
+        with additional info that may be useful.
+    """
     # Get the whole traceback stack
     while 1:
         if not tb.tb_next:
@@ -26,7 +32,34 @@ def inspect_traceback(tb):
         stack.append(f)
         f = f.f_back
     stack.reverse()
-    return stack
+    stack = stack[skip_frame:]
+
+    # improve traceback info
+    cleaned_stack = []
+    for frame in stack:
+        cleaned_frame = {}
+        for k, v in frame.f_locals.items():
+            if isinstance(v, np.ndarray):
+                obj = [
+                    v,
+                    f"Shape: {v.shape}, max: {v.max()}, min: {v.min()}, has nan: {np.any(np.isnan(v))}",
+                ]
+            elif isinstance(v, (list, tuple, str)):
+                obj = [v, f"Length: {len(v)}"]
+            else:
+                obj = [v]
+
+            obj += [v.__class__]
+            cleaned_frame[k] = obj
+        cleaned_stack.append(cleaned_frame)
+
+    locals_panels = []
+    for n, frame in enumerate(cleaned_stack):
+        locals_panels.append(
+            render_scope(frame, title=f"[i]locals frame {n + skip_frame}")
+        )
+
+    return locals_panels
 
 
 def get_locals():
@@ -74,17 +107,9 @@ def install():
     def excepthook(
         type_, value, traceback,
     ):
-        stack = inspect_traceback(traceback)
-
-        locals_panels = []
-        for n, frame in enumerate(stack):
-            locals_panels.append(
-                render_scope(frame.f_locals, title=f"[i]locals frame {n}")
-            )
-
         traceback_console.print(
             Traceback.from_exception(type_, value, traceback,),
-            *locals_panels,
+            *inspect_traceback(traceback),
             sep="\n",
         )
 
