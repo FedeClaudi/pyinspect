@@ -6,6 +6,14 @@ its name, then I have **good news!**. `pyinspect` is here to help you out.
 `pyinspect` allows you to search for functions and class methods based on their name and 
 prints out a handy table with all the functions that met your search criteria.
 
+
+### Installing pyinspect
+It's as simple as:
+``` shell
+pip install pyinspect
+```
+
+
 ## Finding functions
 The easiest way to grasp how `pyinspect` can help is with an example.
 > Imagine that you just can't remember which `matplotlib.pyplot` method you need to create a figure with subplots... 
@@ -96,3 +104,7 @@ a / b
 
 and this is the traceback:
 <img src='media/traceback.png' width=800px></img>
+
+
+## Aknowledgements
+`pyinspect` is mostly a thin wrapper on top of the **awesome** [`rich`](https://github.com/willmcgugan/rich) library, so a huge thank you goes to @willmcgugan for the great job done with `rich`.
