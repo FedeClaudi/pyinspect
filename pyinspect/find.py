@@ -2,11 +2,12 @@ import re
 import inspect
 from rich import print
 from rich.table import Table
+import pkgutil
+import importlib
+from pyinspect.utils import clean_doc, get_class_that_defined_method
 
-from pyinspect.utils import clean_doc
 
-
-def find_class_method(class_obj, name="", print_table=True):
+def search_class_method(class_obj, name="", print_table=True):
     """
         Given a python class, it finds allclass methods whose name includes
         the given search string (name)
@@ -22,6 +23,7 @@ def find_class_method(class_obj, name="", print_table=True):
             "find_class_method expects a python Class object as argument"
         )
 
+    # Look for methods
     found = {k: v for k, v in class_obj.__dict__.items() if name in k}
     if not found:
         print(
@@ -30,25 +32,32 @@ def find_class_method(class_obj, name="", print_table=True):
         return None
 
     if print_table:
+        # make rich table
         table = Table(show_header=True, header_style="bold magenta",)
         table.add_column("#", style="dim", width=3, justify="center")
         table.add_column("name", style="bold green")
-        table.add_column("Line #", width=6, justify="center")
+        table.add_column("Module", justify="center")
+        table.add_column("Class", justify="center")
+        table.add_column("Line #", justify="center")
         table.add_column("Source", style="dim")
 
+        # list methods
         for n, (k, v) in enumerate(found.items()):
             if not inspect.isfunction(v):
                 continue  # skip docstrings etc
-            doc = clean_doc(inspect.getsource(getattr(class_obj, k)), maxn=200)
+            doc = clean_doc(inspect.getsource(getattr(class_obj, k)), maxn=100)
             lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
+            class_obj = get_class_that_defined_method(v)
 
-            table.add_row(str(n), k, str(lineno), doc)
+            table.add_row(
+                str(n), k, v.__module__, class_obj.__name__, str(lineno), doc
+            )
         print(table)
 
     return found
 
 
-def find_module_function(module, name="", print_table=True):
+def search_module_function(module, name="", print_table=True):
     """
         Given a module (e.g. matplotlib.pyplot) finds all the functions
         in it whose name includes the given search string.
@@ -59,13 +68,25 @@ def find_module_function(module, name="", print_table=True):
 
         :returns: dict with all the functions found 
     """
+    modules = {module.__name__: module}
+    for importer, modname, ispkg in pkgutil.walk_packages(
+        path=module.__path__,
+        prefix=module.__name__ + ".",
+        onerror=lambda x: None,
+    ):
+        modules[modname] = importlib.import_module(modname)
+
     # grab all function names that contain `name` from the module
     p = ".*{}.*".format(name)
-    filtered = list(
-        filter(lambda x: re.search(p, x, re.IGNORECASE), dir(module))
-    )
+    found = {}
+    for modname, mod in modules.items():
 
-    if not filtered:
+        found[(modname, mod)] = list(
+            filter(lambda x: re.search(p, x, re.IGNORECASE), dir(mod))
+        )
+    found = {k: v for k, v in found.items() if v}
+
+    if not len(found.keys()):
         print(
             f"[magenta]No functions found in module {module} with query: {name}"
         )
@@ -76,23 +97,29 @@ def find_module_function(module, name="", print_table=True):
         table = Table(show_header=True, header_style="bold magenta")
         table.add_column("#", style="dim", width=3, justify="center")
         table.add_column("name", style="bold green")
-        table.add_column("Docstring", width=52)
-        table.add_column("Module", style="dim")
+        table.add_column("Module")
+        table.add_column("Docstring", style="dim")
 
-        for n, f in enumerate(filtered):
-            attr = getattr(module, f)
-            mod = str(inspect.getmodule(attr))
-            doc = clean_doc(inspect.getdoc(attr))
+        count = 0
+        for (modname, mod), funcs in found.items():
+            for f in funcs:
+                attr = getattr(mod, f)
+                doc = clean_doc(inspect.getdoc(attr), maxn=101)
 
-            table.add_row(str(n), f, doc, mod)
+                table.add_row(str(count), f, modname, doc)
+
+                count += 1
 
         print(table)
 
     # return pointers to the functions
-    return {f: getattr(module, f) for f in filtered}
+    return {
+        modname: [getattr(mod, f) for f in ff]
+        for (modname, mod), ff in found.items()
+    }
 
 
-def find(obj, name="", print_table=True):
+def search(obj, name="", print_table=True):
     """
         General find function, handles both
         find in classes and find in module
@@ -102,6 +129,6 @@ def find(obj, name="", print_table=True):
         :param print_table: bool, optional. If True it prints a table with all the found items
     """
     if inspect.isclass(obj):
-        return find_class_method(obj, name=name, print_table=print_table)
+        return search_class_method(obj, name=name, print_table=print_table)
     else:
-        return find_module_function(obj, name=name, print_table=print_table)
+        return search_module_function(obj, name=name, print_table=print_table)
