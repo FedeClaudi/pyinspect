@@ -1,11 +1,10 @@
 import re
 import inspect
-from rich.syntax import Syntax
 from rich import print
 from rich.table import Table
-from rich import inspect as rinspect
 
-def clean_doc(doc,  maxn=47):
+
+def clean_doc(doc, maxn=47):
     """
         Cleans a docstring and shortens it if necessary + appends and ellips
 
@@ -15,16 +14,16 @@ def clean_doc(doc,  maxn=47):
         :returns: str
     """
     if doc is None:
-        return ''
+        return ""
     else:
         doc = doc.strip()
-        if len(doc)>maxn:
-            return doc[:maxn] + '...'
+        if len(doc) > maxn:
+            return doc[:maxn] + "..."
         else:
             return doc
-    
 
-def find_class_method(class_obj, name='', print_table=True):
+
+def find_class_method(class_obj, name="", print_table=True):
     """
         Given a python class, it finds allclass methods whose name includes
         the given search string (name)
@@ -36,24 +35,27 @@ def find_class_method(class_obj, name='', print_table=True):
         :returns: dict with all the methods found
     """
     if not inspect.isclass(class_obj):
-        raise ValueError('find_class_method expects a python Class object as argument')
+        raise ValueError(
+            "find_class_method expects a python Class object as argument"
+        )
 
-
-    found = {k:v for k,v in class_obj.__dict__.items() if name in k}
+    found = {k: v for k, v in class_obj.__dict__.items() if name in k}
     if not found:
-        print(f'[magenta]No methods found in class {class_obj} with query: {name}')
+        print(
+            f"[magenta]No methods found in class {class_obj} with query: {name}"
+        )
         return None
 
     if print_table:
         table = Table(show_header=True, header_style="bold magenta",)
-        table.add_column("#", style="dim", width=3, justify='center')
-        table.add_column("name", style='bold green')
-        table.add_column("Line #", width=6, justify='center')
-        table.add_column("Source", style='dim')
-        
+        table.add_column("#", style="dim", width=3, justify="center")
+        table.add_column("name", style="bold green")
+        table.add_column("Line #", width=6, justify="center")
+        table.add_column("Source", style="dim")
 
-        for n, (k,v) in enumerate(found.items()):
-            if not inspect.isfunction(v): continue  # skip docstrings etc
+        for n, (k, v) in enumerate(found.items()):
+            if not inspect.isfunction(v):
+                continue  # skip docstrings etc
             doc = clean_doc(inspect.getsource(getattr(class_obj, k)), maxn=200)
             lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
 
@@ -63,7 +65,7 @@ def find_class_method(class_obj, name='', print_table=True):
     return found
 
 
-def find_module_function(module, name='', print_table=True):
+def find_module_function(module, name="", print_table=True):
     """
         Given a module (e.g. matplotlib.pyplot) finds all the functions
         in it whose name includes the given search string.
@@ -76,20 +78,24 @@ def find_module_function(module, name='', print_table=True):
     """
     # grab all function names that contain `name` from the module
     p = ".*{}.*".format(name)
-    filtered = list(filter(lambda x: re.search(p, x, re.IGNORECASE), dir(module)))
+    filtered = list(
+        filter(lambda x: re.search(p, x, re.IGNORECASE), dir(module))
+    )
 
     if not filtered:
-        print(f'[magenta]No functions found in module {module} with query: {name}')
+        print(
+            f"[magenta]No functions found in module {module} with query: {name}"
+        )
         return None
 
     # Print a table with the results
     if print_table:
         table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("#", style="dim", width=3, justify='center')
-        table.add_column("name", style='bold green')
+        table.add_column("#", style="dim", width=3, justify="center")
+        table.add_column("name", style="bold green")
         table.add_column("Docstring", width=52)
-        table.add_column("Module", style='dim')
-        
+        table.add_column("Module", style="dim")
+
         for n, f in enumerate(filtered):
             attr = getattr(module, f)
             mod = str(inspect.getmodule(attr))
@@ -100,9 +106,10 @@ def find_module_function(module, name='', print_table=True):
         print(table)
 
     # return pointers to the functions
-    return {f:getattr(module, f) for f in filtered}
+    return {f: getattr(module, f) for f in filtered}
 
-def find(obj, name='', print_table=True):
+
+def find(obj, name="", print_table=True):
     """
         General find function, handles both
         find in classes and find in module

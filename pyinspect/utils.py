@@ -4,12 +4,12 @@ from rich.syntax import Syntax
 
 import time
 
+
 def timestamp():
     """
         Returns a formatted timestamp
     """
     return time.strftime("%y%m%d_%H%M%S")
-
 
 
 def print_function(func):
@@ -19,8 +19,10 @@ def print_function(func):
         :param func: pointer to a python function
     """
     if not inspect.isfunction(func):
-        raise ValueError('print_function expects a function as argument')
-    
+        raise ValueError("print_function expects a function as argument")
+
     module = inspect.getfile(inspect.getmodule(func))
-    print(f'\n[bold] function [yellow]{func.__name__}[/yellow] from {module}\n',
-            Syntax(inspect.getsource(func), lexer_name='python'))
+    print(
+        f"\n[bold] function [yellow]{func.__name__}[/yellow] from {module}\n",
+        Syntax(inspect.getsource(func), lexer_name="python"),
+    )
