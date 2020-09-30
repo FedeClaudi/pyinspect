@@ -1,18 +1,75 @@
 import sys
 import inspect
 import rich
-from rich.scope import render_scope
 from rich.traceback import Traceback
 from rich import print
 from rich.console import Console
 from rich.style import Style
 from rich.theme import Theme
+from rich.table import Table
+from rich.highlighter import ReprHighlighter
+from rich.panel import Panel
+from rich.pretty import Pretty
+from rich.text import Text
+
 import numpy as np
 
 from pyinspect.utils import timestamp
 
 # Override some of rich's default parameters
 rich.default_styles.DEFAULT_STYLES["scope.border"] = Style(color="green")
+
+
+def render_scope(scope, *, title=None, sort_keys=True):
+    """Render python variables in a given scope | editing
+        the corresponding function in rich.scope.
+
+    Args:
+        scope (Mapping): A mapping containing variable names and values.
+        title (str, optional): Optional title. Defaults to None.
+        sort_keys (bool, optional): Enable sorting of items. Defaults to True.
+
+    Returns:
+        RenderableType: A renderable object.
+    """
+
+    highlighter = ReprHighlighter()
+    items_table = Table.grid(padding=(0, 1), expand=False)
+    items_table.add_column(justify="right",)
+    items_table.add_column(justify="left", width=25)
+    items_table.add_column(justify="left", width=25)
+    items_table.add_column(justify="left", style="white")
+
+    def sort_items(item):
+        """Sort special variables first, then alphabetically."""
+        key, _ = item
+        return (not key.startswith("__"), key.lower())
+
+    items = (
+        sorted(scope.items(), key=sort_items) if sort_keys else scope.items()
+    )
+    for key, value in items:
+        key_text = Text.assemble(
+            (
+                key,
+                "scope.key.special" if key.startswith("__") else "scope.key",
+            ),
+            (" =", "scope.equals"),
+        )
+        items_table.add_row(
+            key_text,
+            Pretty(value[0], highlighter=highlighter),
+            Pretty(value[1], highlighter=highlighter),
+            *[Pretty(v) for v in value[2:]],
+        )
+
+    return Panel.fit(
+        items_table,
+        title=title,
+        border_style="scope.border",
+        padding=(0, 1),
+        width=250,
+    )
 
 
 def inspect_traceback(tb, skip_frame=1):
@@ -54,9 +111,11 @@ def inspect_traceback(tb, skip_frame=1):
             elif isinstance(v, (list, tuple, str)):
                 obj = [v, f"Length: ", len(v)]
             else:
-                obj = [v]
+                obj = [
+                    v,
+                ]
 
-            obj += [v.__class__]
+            obj.insert(1, v.__class__)
             cleaned_frame[k] = obj
         cleaned_stack.append(cleaned_frame)
 
