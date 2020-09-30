@@ -102,3 +102,16 @@ def find_module_function(module, name='', print_table=True):
     # return pointers to the functions
     return {f:getattr(module, f) for f in filtered}
 
+def find(obj, name='', print_table=True):
+    """
+        General find function, handles both
+        find in classes and find in module
+
+        :param obj: object, either a python class or module
+        :param name: str, optional. Search query.
+        :param print_table: bool, optional. If True it prints a table with all the found items
+    """
+    if inspect.isclass(obj):
+        return find_class_method(obj, name=name, print_table=print_table)
+    else:
+        return find_module_function(obj, name=name, print_table=print_table)
