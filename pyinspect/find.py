@@ -3,24 +3,7 @@ import inspect
 from rich import print
 from rich.table import Table
 
-
-def clean_doc(doc, maxn=47):
-    """
-        Cleans a docstring and shortens it if necessary + appends and ellips
-
-        :param doc: str, string with docstring
-        :param maxn: int, docstrings longer than maxn will be truncated
-
-        :returns: str
-    """
-    if doc is None:
-        return ""
-    else:
-        doc = doc.strip()
-        if len(doc) > maxn:
-            return doc[:maxn] + "..."
-        else:
-            return doc
+from pyinspect.utils import clean_doc
 
 
 def find_class_method(class_obj, name="", print_table=True):

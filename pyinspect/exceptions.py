@@ -59,7 +59,7 @@ def render_scope(scope, *, title=None, sort_keys=True):
         items_table.add_row(
             key_text,
             Pretty(value[0], highlighter=highlighter),
-            Pretty(value[1], highlighter=highlighter),
+            str(value[1]),
             *[Pretty(v) for v in value[2:]],
         )
 
