@@ -7,7 +7,9 @@ import importlib
 from pyinspect.utils import clean_doc, get_class_that_defined_method
 
 
-def search_class_method(class_obj, name="", print_table=True):
+def search_class_method(
+    class_obj, name="", print_table=True, include_parents=True
+):
     """
         Given a python class, it finds allclass methods whose name includes
         the given search string (name)
@@ -15,6 +17,7 @@ def search_class_method(class_obj, name="", print_table=True):
         :param class_obj: a python Class. Should not be a class instance, but a point to the class object
         :param name: str, optional. Returns only methods which have this string in the name. If not is given returns all methods
         :param print_table: bool, optional. If True it prints a table with all the found methods
+        :param bool: if true it looks for methods in parents of the class_obj as well
 
         :returns: dict with all the methods found
     """
@@ -23,9 +26,29 @@ def search_class_method(class_obj, name="", print_table=True):
             "find_class_method expects a python Class object as argument"
         )
 
-    # Look for methods
-    found = {k: v for k, v in class_obj.__dict__.items() if name in k}
-    if not found:
+    # Look for methods in the class and in the parents
+    objs = [class_obj]
+
+    if include_parents:
+
+        def get_parent_classes(obj):
+            if obj is None:
+                return
+            parents = obj.__base__
+            if parents is None:
+                return
+            for p in [parents]:
+                get_parent_classes(p)
+            objs.append(parents)
+
+        get_parent_classes(class_obj)
+
+    found = {}
+    for obj in objs:
+        found[obj] = {k: v for k, v in obj.__dict__.items() if name in k}
+    found = {k: v for k, v in found.items() if v.keys()}
+
+    if not found.keys():
         print(
             f"[magenta]No methods found in class {class_obj} with query: {name}"
         )
@@ -37,22 +60,42 @@ def search_class_method(class_obj, name="", print_table=True):
         table.add_column("#", style="dim", width=3, justify="center")
         table.add_column("name", style="bold green")
         table.add_column("Module", justify="center")
-        table.add_column("Class", justify="center")
+        table.add_column("Class", justify="center", style="bold green")
+        table.add_column("Is Parent", justify="center")
         table.add_column("Line #", justify="center")
         table.add_column("Source", style="dim")
 
         # list methods
-        for n, (k, v) in enumerate(found.items()):
-            if not inspect.isfunction(v):
-                continue  # skip docstrings etc
-            doc = clean_doc(inspect.getsource(getattr(class_obj, k)), maxn=100)
-            lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
-            class_obj = get_class_that_defined_method(v)
+        for n, (obj, methods) in enumerate(found.items()):
+            for k, v in methods.items():
+                if not inspect.isfunction(v):
+                    continue  # skip docstrings etc
 
-            table.add_row(
-                str(n), k, v.__module__, class_obj.__name__, str(lineno), doc
-            )
-        print(table)
+                source = clean_doc(
+                    inspect.getsource(getattr(class_obj, k)), maxn=125
+                )
+                lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
+                class_obj = get_class_that_defined_method(v)
+
+                is_parent = (
+                    "[green]:heavy_check_mark:[/green]"
+                    if obj == class_obj
+                    else ""
+                )
+
+                table.add_row(
+                    str(n),
+                    k,
+                    v.__module__,
+                    class_obj.__name__,
+                    is_parent,
+                    str(lineno),
+                    source,
+                )
+        print(
+            f"[yellow]Looking for methods of [magenta]{class_obj.__name__} ({class_obj.__module__})[/magenta] with query name: [magenta]{name}:",
+            table,
+        )
 
     return found
 
@@ -110,7 +153,10 @@ def search_module_function(module, name="", print_table=True):
 
                 count += 1
 
-        print(table)
+        print(
+            f"[yellow]Looking for functions of [magenta]{module.__name__}[/magenta] with query name: [magenta]{name}:",
+            table,
+        )
 
     # return pointers to the functions
     return {
