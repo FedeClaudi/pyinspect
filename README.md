@@ -33,7 +33,7 @@ funcs = pyinspect.search(plt, name='subplot')
 ```
 
 This results in:
-<img src='media/find_matplotlib.png' width=800px></img>
+<img src='media/find_matplotlib.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 **note**: search also looks for functions in sub-modules of the module found.
 e.g.  `search(matplotlib...)` will look for methods across the entire `matplotlib` library!
@@ -54,7 +54,7 @@ methods = pyinspect.search(Console, 'export')
 ```
 
 Which gives:
-<img src='media/find_rich.png' width=800px></img>
+<img src='media/find_rich.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
 **note**: search also looks for methods matching your query 
@@ -85,7 +85,7 @@ pyinspect.print_function(Console.export_text)
 ```
 
 which yields:
-<img src='media/print_function.png' width=800px></img>
+<img src='media/print_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
 ## Tracebacks
@@ -111,7 +111,7 @@ sum(a, b)
 ```
 
 and this is the traceback:
-<img src='media/traceback.png' width=800px></img>
+<img src='media/traceback.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
 ## Aknowledgements
