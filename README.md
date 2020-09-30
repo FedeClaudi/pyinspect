@@ -40,9 +40,8 @@ This results in:
 say that you're looking for a method with `export` in the name in `rich.console.Console`:
 
 ``` python
-# import the class you're using
+# import the class you need to inspect
 from rich.console import Console
-
 
 # import pyinspect
 import pyinspect
@@ -59,10 +58,11 @@ Which gives:
 
 **PRO TIP:** if you don't pass a search string (e.g. `pyinspect.find(Console)`), `pyinspect.find` will print **all** functions and methods.
 
+\
 ## Inspecting functions
 Okay, you've found the function you need, that's great. *But how does it work?*
 
-What if, in addition to the exact name you've forgotten which arguments it takes, or how it 
+What if, in addition to the exact name, you've forgotten which arguments it takes, or how it 
 works exactly. Well, `pyinspect` can help you there as well!
 You can use `pyinspect.print_function` to print the source code of any function or attribute:
 
@@ -96,10 +96,13 @@ import pyinspect
 # make some buggy code
 import numpy as np
 
+def sum(a, b):
+    return a + b
+
 a = np.ones(5)
 b = np.zeros(4)
 
-a / b
+sum(a, b)
 ```
 
 and this is the traceback:
