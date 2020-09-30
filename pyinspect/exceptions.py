@@ -42,10 +42,17 @@ def inspect_traceback(tb, skip_frame=1):
             if isinstance(v, np.ndarray):
                 obj = [
                     v,
-                    f"Shape: {v.shape}, max: {v.max()}, min: {v.min()}, has nan: {np.any(np.isnan(v))}",
+                    "Shape:",
+                    v.shape,
+                    "max:",
+                    v.max(),
+                    "min:",
+                    v.min(),
+                    "has nan:",
+                    np.any(np.isnan(v)),
                 ]
             elif isinstance(v, (list, tuple, str)):
-                obj = [v, f"Length: {len(v)}"]
+                obj = [v, f"Length: ", len(v)]
             else:
                 obj = [v]
 
