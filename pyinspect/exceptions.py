@@ -161,7 +161,7 @@ def print_exception(message=None, traceback=None, **kwargs):
     print(message, traceback, "\n", get_locals(), sep="\n")
 
 
-def install():
+def install_traceback():
     """
         Install an improved rich traceback handler (it includes a view of the local variables).
         Once installed, any tracebacks will be printed with syntax highlighting and rich formatting.

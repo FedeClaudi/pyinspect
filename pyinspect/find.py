@@ -8,7 +8,7 @@ from pyinspect.utils import clean_doc, get_class_that_defined_method
 
 
 def search_class_method(
-    class_obj, name="", print_table=True, include_parents=True
+    class_obj, name="", print_table=True, include_parents=True, **kwargs
 ):
     """
         Given a python class, it finds allclass methods whose name includes

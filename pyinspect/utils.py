@@ -64,7 +64,7 @@ def print_function(func):
 
         :param func: pointer to a python function
     """
-    if not inspect.isfunction(func):
+    if not (inspect.isfunction(func) or inspect.isbuiltin(func)):
         raise ValueError("print_function expects a function as argument")
 
     # Print source class

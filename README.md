@@ -95,8 +95,9 @@ print nicely formatted tracebacks **and** show the `local variables` when the ex
 E.g.:
 ``` python
 
-# import pyinspect installs the traceback handler
+# import pyinspect and install the traceback handler
 import pyinspect
+pyinspect.install_traceback()
 
 # make some buggy code
 import numpy as np
