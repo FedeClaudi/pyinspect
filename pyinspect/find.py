@@ -6,6 +6,14 @@ from rich.table import Table
 from rich import inspect as rinspect
 
 def clean_doc(doc,  maxn=47):
+    """
+        Cleans a docstring and shortens it if necessary + appends and ellips
+
+        :param doc: str, string with docstring
+        :param maxn: int, docstrings longer than maxn will be truncated
+
+        :returns: str
+    """
     if doc is None:
         return ''
     else:
@@ -16,7 +24,21 @@ def clean_doc(doc,  maxn=47):
             return doc
     
 
-def find_class_method(class_obj, name, print_table=True):
+def find_class_method(class_obj, name='', print_table=True):
+    """
+        Given a python class, it finds allclass methods whose name includes
+        the given search string (name)
+
+        :param class_obj: a python Class. Should not be a class instance, but a point to the class object
+        :param name: str, optional. Returns only methods which have this string in the name. If not is given returns all methods
+        :param print_table: bool, optional. If True it prints a table with all the found methods
+
+        :returns: dict with all the methods found
+    """
+    if not inspect.isclass(class_obj):
+        raise ValueError('find_class_method expects a python Class object as argument')
+
+
     found = {k:v for k,v in class_obj.__dict__.items() if name in k}
     if not found:
         print(f'[magenta]No methods found in class {class_obj} with query: {name}')
@@ -31,6 +53,7 @@ def find_class_method(class_obj, name, print_table=True):
         
 
         for n, (k,v) in enumerate(found.items()):
+            if not inspect.isfunction(v): continue  # skip docstrings etc
             doc = clean_doc(inspect.getsource(getattr(class_obj, k)), maxn=200)
             lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
 
@@ -39,7 +62,18 @@ def find_class_method(class_obj, name, print_table=True):
 
     return found
 
-def find_module_function(module, name, print_table=True):
+
+def find_module_function(module, name='', print_table=True):
+    """
+        Given a module (e.g. matplotlib.pyplot) finds all the functions
+        in it whose name includes the given search string.
+
+        :param module: python module (e.g. numpy)
+        :param name: str, optional. Search string, if none is passed it returns all functions
+        :param print_table: bool, optional.  If True it prints a table with all the found functions
+
+        :returns: dict with all the functions found 
+    """
     # grab all function names that contain `name` from the module
     p = ".*{}.*".format(name)
     filtered = list(filter(lambda x: re.search(p, x, re.IGNORECASE), dir(module)))

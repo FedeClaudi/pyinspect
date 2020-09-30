@@ -1,4 +1,4 @@
-from rich.traceback import install
+from pyinspect.exceptions import install, print_exception
 install()
 
-from pyinspect.utils import print_exception, print_function
+from pyinspect.utils import print_function
