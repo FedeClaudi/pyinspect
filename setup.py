@@ -12,7 +12,7 @@ requirements = [
 
 setup(
     name="pyinspect",
-    version="0.0.3",
+    version="0.0.4rc",
     description="Find and inspect python functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
