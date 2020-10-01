@@ -2,6 +2,7 @@ from rich import print
 from rich.syntax import Syntax
 from rich.console import Console
 from rich.text import Text
+from pprint import PrettyPrinter
 
 import inspect
 import time
@@ -10,15 +11,16 @@ import functools
 from io import StringIO
 
 
-def textify(obj, maxlen=21):
+def textify(obj, maxlen=31):
+    pretty = PrettyPrinter(compact=True)
     buf = StringIO()
     console = Console(file=buf, force_jupyter=False)
-    console.print(obj)
+    console.print(pretty.pformat(obj))
 
     out = buf.getvalue()
 
     if len(out) > maxlen:
-        out = out[:maxlen] + "..."
+        out = out[:maxlen] + " ..."
 
     return Text(out)
 

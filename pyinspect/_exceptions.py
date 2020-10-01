@@ -37,16 +37,8 @@ def _print_object(obj):
         return textify(obj)
 
     elif isinstance(obj, np.ndarray):  # deal with numpy arrays
-        if np.any(np.array(obj.shape) > 7):
-            return textify(f"np.ndarray [{obj.shape}]", maxlen=10000)
-        else:
-            return Pretty(
-                obj,
-                highlighter=highlighter,
-                no_wrap=True,
-                overflow=None,
-                justify="left",
-            )
+        return textify(obj)
+
     else:  # deal with everything else
         return Pretty(
             obj, highlighter=highlighter, justify="left", overflow="ellipsis"
@@ -178,14 +170,20 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
         # Get locals
         locs = {}
         for k, v in f.f_locals.items():
+            mod = v.__class__.__module__
+            name = v.__class__.__name__
+            _type = f"{mod}.{name}"
+
             # Check if object should be included
             if not all_locals:
-                mod = v.__class__.__module__
+
                 if (
                     inspect.isfunction(v)
                     or inspect.ismodule(v)
                     or inspect.isbuiltin(v)
-                    or mod == "builtins"
+                    or "function" in name
+                    or "module" in name
+                    or "type" in name
                 ):
                     continue
 
@@ -198,7 +196,7 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
                 info = ""
 
             # get type color
-            _type = f"{v.__class__.__module__}.{v.__class__.__name__}"
+
             if "function" in _type:
                 type_color = "#FFFACD"
             elif "module" in _type:
