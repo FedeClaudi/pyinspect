@@ -33,9 +33,10 @@ def _print_object(obj):
             justify="left",
         )
 
-    elif isinstance(obj, (list, tuple)):  # deal with lists and tuples
+    elif isinstance(obj, (list, tuple, str)):  # deal with lists and tuples
         return textify(obj)
-    elif isinstance(obj, np.ndarray):
+
+    elif isinstance(obj, np.ndarray):  # deal with numpy arrays
         if np.any(np.array(obj.shape) > 7):
             return textify(f"np.ndarray [{obj.shape}]", maxlen=10000)
         else:
@@ -171,7 +172,7 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
         )
 
         # make clickable filepath
-        text = Text(fpath, style="bold white underline")
+        text = Text(fpath + f":{f.f_lineno}", style="bold white underline")
         text.stylize(f"link file://{fpath}")
 
         # Get locals
