@@ -7,7 +7,7 @@
 # import pyinspect and install the traceback handler
 import pyinspect
 
-pyinspect.install_traceback()
+pyinspect.install_traceback()  # use hide_locals=True to hide locals panels
 
 # make some buggy code
 import numpy as np
