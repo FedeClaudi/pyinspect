@@ -1,8 +1,26 @@
 from rich import print
 from rich.syntax import Syntax
+from rich.console import Console
+from rich.text import Text
+
 import inspect
 import time
 import functools
+
+from io import StringIO
+
+
+def textify(obj, maxlen=21):
+    buf = StringIO()
+    console = Console(file=buf, force_jupyter=False)
+    console.print(obj)
+
+    out = buf.getvalue()
+
+    if len(out) > maxlen:
+        out = out[:maxlen] + "..."
+
+    return Text(out)
 
 
 def timestamp():
