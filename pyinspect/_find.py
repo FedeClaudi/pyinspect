@@ -1,11 +1,11 @@
-from inspect import isclass, getsourcelines, isfunction
+from inspect import isclass, getsourcelines, isfunction, signature
 import inspect
 
 from rich import box, print
 from rich.table import Table
 
-from pyinspect._colors import lightgray, lightgreen, yellow
-from pyinspect.utils import clean_doc, get_class_that_defined_method
+from pyinspect._colors import lightgray, lightgreen, yellow, salmon
+from pyinspect.utils import clean_doc, get_class_that_defined_method, textify
 
 
 def print_methods_table(found, class_obj, name):
@@ -22,11 +22,12 @@ def print_methods_table(found, class_obj, name):
         show_header=True, header_style="bold magenta", box=box.SIMPLE,
     )
     table.add_column("#", style="dim", width=3, justify="center")
-    table.add_column("name", style="bold green")
-    table.add_column("Module", justify="center")
-    table.add_column("Class", justify="center", style="bold green")
-    table.add_column("Line #", justify="center")
-    table.add_column("Source", style="dim")
+    table.add_column("name", style="bold " + lightgreen)
+    table.add_column("Class", justify="left")
+    table.add_column("", style="bold " + lightgreen)
+
+    table.add_column("Module", justify="left")
+    table.add_column("Signature")
 
     # list methods
     count = 0
@@ -35,29 +36,27 @@ def print_methods_table(found, class_obj, name):
             if not isfunction(v):
                 continue  # skip docstrings etc
 
-            source = clean_doc(
-                inspect.getsource(getattr(class_obj, k)), maxn=125
-            )
             lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
             cs = get_class_that_defined_method(v)
+            sig = textify(str(signature(cs)), maxlen=50)
 
-            # TODO sort columns
-            # TODO color things according to parent/original
-            # TODO add line in module name
-            # TODO replace source with signature
+            if cs == class_obj:
+                cs = f"[{lightgreen}]{cs.__name__}[/{lightgreen}]"
+                method_name = k
+            else:
+                cs = f"[{salmon}]{cs.__name__}[/{salmon}]"
+                method_name = f"[{salmon}]{k}[/{salmon}]"
+
+            module = f"[white]{v.__module__} [dim](line: {lineno})"
 
             table.add_row(
-                str(count),
-                k,
-                v.__module__,
-                cs.__name__,
-                # is_parent,
-                str(lineno),
-                source,
+                str(count), method_name, cs, "", module, sig,
             )
             count += 1
+
+    st = "bold black on yellow"
     print(
-        f"[yellow]Looking for methods of [magenta]{class_obj.__name__} ({class_obj.__module__})[/magenta] with query name: [magenta]{name}:",
+        f"\n[yellow]Looking for methods of [{st}] {class_obj.__name__} ({class_obj.__module__}) [/{st}] with query name: [{st}] {name} [/{st}]:",
         table,
     )
 
@@ -97,10 +96,10 @@ def print_funcs_table(found, module, name):
                 text = f"[{yellow}]{modname}[/{yellow}]"
 
             # add to table
-            table.add_row(str(count), f, text, str(inspect.signature(func)))
+            table.add_row(str(count), f, text, str(signature(func)))
             count += 1
 
-    st = "black bold on white"
+    st = "black bold on yellow"
     print(
         f"[yellow]\nLooking for functions of [{st}] {module.__name__} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
         table,
