@@ -1,10 +1,10 @@
-import re
 import inspect
+from inspect import isfunction, isclass
 from rich import print
-from rich.table import Table
-import pkgutil
-import importlib
-from pyinspect.utils import clean_doc, get_class_that_defined_method
+
+
+from pyinspect.utils import get_submodules
+from pyinspect._find import print_funcs_table, print_methods_table
 
 
 def search_class_method(
@@ -21,7 +21,7 @@ def search_class_method(
 
         :returns: dict with all the methods found
     """
-    if not inspect.isclass(class_obj):
+    if not isclass(class_obj):
         raise ValueError(
             "find_class_method expects a python Class object as argument"
         )
@@ -55,51 +55,12 @@ def search_class_method(
         return None
 
     if print_table:
-        # make rich table
-        table = Table(show_header=True, header_style="bold magenta",)
-        table.add_column("#", style="dim", width=3, justify="center")
-        table.add_column("name", style="bold green")
-        table.add_column("Module", justify="center")
-        table.add_column("Class", justify="center", style="bold green")
-        table.add_column("Line #", justify="center")
-        table.add_column("Source", style="dim")
-
-        # list methods
-        for n, (obj, methods) in enumerate(found.items()):
-            for k, v in methods.items():
-                if not inspect.isfunction(v):
-                    continue  # skip docstrings etc
-
-                source = clean_doc(
-                    inspect.getsource(getattr(class_obj, k)), maxn=125
-                )
-                lineno = inspect.getsourcelines(getattr(class_obj, k))[1]
-                class_obj = get_class_that_defined_method(v)
-
-                # is_parent = (
-                #     "[green]:heavy_check_mark:[/green]"
-                #     if obj == class_obj
-                #     else ""
-                # )
-
-                table.add_row(
-                    str(n),
-                    k,
-                    v.__module__,
-                    class_obj.__name__,
-                    # is_parent,
-                    str(lineno),
-                    source,
-                )
-        print(
-            f"[yellow]Looking for methods of [magenta]{class_obj.__name__} ({class_obj.__module__})[/magenta] with query name: [magenta]{name}:",
-            table,
-        )
-
-    return found
+        print_methods_table(found, class_obj, name)
 
 
-def search_module_function(module, name="", print_table=True, **kwargs):
+def search_module_function(
+    module, name="", print_table=True, include_class=True, **kwargs
+):
     """
         Given a module (e.g. matplotlib.pyplot) finds all the functions
         in it whose name includes the given search string.
@@ -110,28 +71,33 @@ def search_module_function(module, name="", print_table=True, **kwargs):
 
         :returns: dict with all the functions found 
     """
-    try:
-        path = module.__path__
-    except Exception:
-        path = [inspect.getfile(module)]
 
-    modules = {module.__name__: module}
-    for importer, modname, ispkg in pkgutil.walk_packages(
-        path=path, prefix=module.__name__ + ".", onerror=lambda x: None,
-    ):
-        try:
-            modules[modname] = importlib.import_module(modname)
-        except (ImportError, OSError):
-            pass
+    def same_module(obj, module):
+        return inspect.getmodule(obj) == module
+
+    # Get all the submodules
+    modules = get_submodules(module)
 
     # grab all function names that contain `name` from the module
-    p = ".*{}.*".format(name)
     found = {}
     for modname, mod in modules.items():
+        # get only functions
+        funcs = [
+            o
+            for o in inspect.getmembers(mod)
+            if isfunction(o[1]) or isclass(o[1])
+        ]
 
-        found[(modname, mod)] = list(
-            filter(lambda x: re.search(p, x, re.IGNORECASE), dir(mod))
-        )
+        if not include_class:
+            funcs = [o for o in funcs if not isclass(o[1])]
+
+        # keep only functions from this module
+        mod_funcs = [o for o in funcs if same_module(o[1], mod)]
+
+        # keep only functions matching the query name
+        filtered = [o[0] for o in mod_funcs if name.lower() in o[0].lower()]
+
+        found[(modname, mod)] = filtered
     found = {k: v for k, v in found.items() if v}
 
     if not len(found.keys()):
@@ -142,32 +108,7 @@ def search_module_function(module, name="", print_table=True, **kwargs):
 
     # Print a table with the results
     if print_table:
-        table = Table(show_header=True, header_style="bold magenta")
-        table.add_column("#", style="dim", width=3, justify="center")
-        table.add_column("name", style="bold green")
-        table.add_column("Module")
-        table.add_column("Docstring", style="dim")
-
-        count = 0
-        for (modname, mod), funcs in found.items():
-            for f in funcs:
-                attr = getattr(mod, f)
-                doc = clean_doc(inspect.getdoc(attr), maxn=101)
-
-                table.add_row(str(count), f, modname, doc)
-
-                count += 1
-
-        print(
-            f"[yellow]Looking for functions of [magenta]{module.__name__}[/magenta] with query name: [magenta]{name}:",
-            table,
-        )
-
-    # return pointers to the functions
-    return {
-        modname: [getattr(mod, f) for f in ff]
-        for (modname, mod), ff in found.items()
-    }
+        print_funcs_table(found, module, name)
 
 
 def search(obj, name="", print_table=True, **kwargs):

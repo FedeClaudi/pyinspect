@@ -8,10 +8,18 @@ import matplotlib.pyplot as plt
 import matplotlib
 
 # import pyinspect
-import pyinspect
+import pyinspect as pi
 
 # Find the functions you're looking for
-funcs = pyinspect.search(plt, name="subplot")
+pi.search(plt, name="subplot")
 
 # Or look for it in the entire package!
-funcs = pyinspect.search(matplotlib, name="subplot")
+pi.search(matplotlib, name="subplot")
+
+
+"""
+    Pro tip: omit the 'name' argument to find *all* functions
+
+    Pro tip: pass 'include_class=False' to pi.search to ignore classes and 
+        only look for functions
+"""

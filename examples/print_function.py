@@ -6,7 +6,7 @@
 from matplotlib.pyplot import subplots
 
 # import pyinspect
-import pyinspect
+import pyinspect as pi
 
 # Print a function's source code
-pyinspect.print_function(subplots)
+pi.showme(subplots)

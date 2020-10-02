@@ -7,9 +7,7 @@
 from rich.console import Console
 
 # import pyinspect
-import pyinspect
+import pyinspect as pi
 
 # find class methods
-methods = pyinspect.search(
-    Console, "export"
-)  # use include_parents=False to skip parents
+pi.search(Console, "export")  # use include_parents=False to skip parents

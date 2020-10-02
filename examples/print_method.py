@@ -9,7 +9,7 @@ from rich.console import Console
 
 
 # import pyinspect
-import pyinspect
+import pyinspect as pi
 
 # Print a function's source code
-pyinspect.print_function(Console.export_text)
+pi.showme(Console.export_text)

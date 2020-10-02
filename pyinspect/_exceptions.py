@@ -11,6 +11,7 @@ from collections import namedtuple
 import numpy as np
 
 from pyinspect.utils import textify
+from pyinspect._colors import lightgray, yellow, lilla, salmon
 
 PANEL_WIDTH = 125
 local = namedtuple("local", "key, obj, type, info")
@@ -67,16 +68,22 @@ def render_scope(synt, scope, *, title=None, sort_keys=True):
         width=PANEL_WIDTH,
     )
     items_table.add_column(
-        justify="right", width=6, header="[#C0C0C0]object", overflow="fold"
+        justify="right",
+        width=6,
+        header=f"[{lightgray}]object",
+        overflow="fold",
     )
     items_table.add_column(
-        justify="left", width=25, header="[#C0C0C0]value", overflow="ellipsis"
+        justify="left",
+        width=25,
+        header=f"[{lightgray}]value",
+        overflow="ellipsis",
     )
     items_table.add_column(
-        justify="left", width=15, header="[#C0C0C0]type", overflow="fold"
+        justify="left", width=15, header=f"[{lightgray}]type", overflow="fold"
     )
     items_table.add_column(
-        justify="left", header="[#C0C0C0]info", overflow="fold"
+        justify="left", header=f"[{lightgray}]info", overflow="fold"
     )
 
     # sort items
@@ -198,18 +205,18 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
             # get type color
 
             if "function" in _type:
-                type_color = "#FFFACD"
+                type_color = yellow
             elif "module" in _type:
-                type_color = "#C8A2C8"
+                type_color = lilla
             elif "." in _type:
-                type_color = "#FA8072"
+                type_color = salmon
             else:
                 type_color = "white"
 
             locs[k] = local(
                 k,
                 v,
-                f"[#C0C0C0]{_type}".replace(".", f".[{type_color}]"),
+                f"[{lightgray}]{_type}".replace(".", f".[{type_color}]"),
                 info,
             )
 
