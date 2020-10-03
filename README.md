@@ -7,6 +7,8 @@ its name, then I have **good news!**. `pyinspect` is here to help you out.
 prints out a handy table with all the functions that met your search criteria.
 
 
+<img src='coverage.svg'>
+
 ### Installing pyinspect
 It's as simple as:
 ``` shell

@@ -4,6 +4,7 @@ repos:
     hooks:
     - id: black
       pass_filenames: true
+
 -   repo: https://gitlab.com/pycqa/flake8
     rev: 3.7.9
     hooks:
@@ -11,3 +12,12 @@ repos:
       pass_filenames: true
       # this seems to need to be here in addition to setup.cfg
       exclude: __init__.py
+
+- repo: local
+  hooks:
+    - id: make_coverage_badge
+      name: make_coverage_badge
+      entry: bash -c 'rm coverage.svg;coverage-badge -o coverage.svg'
+      language: system
+      types: [python]
+      pass_filenames: false
