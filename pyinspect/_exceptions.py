@@ -100,47 +100,54 @@ def render_scope(synt, scope, *, title=None, relevant_only=False):
     # sort items
     items = sorted(scope.items(), key=sort_items)
 
-    # Split items to get variables in error line
-    linevars = get_variables_in_line(items[0][1].eline)
-    in_eline = [itm for itm in items if itm[0] in linevars]
-    not_in_eline = [itm for itm in items if itm[0] not in linevars]
+    added_items = False  # flag to check if table is filled in
+    if items:
+        # Split items to get variables in error line
+        linevars = get_variables_in_line(items[0][1].eline)
+        in_eline = [itm for itm in items if itm[0] in linevars]
+        not_in_eline = [itm for itm in items if itm[0] not in linevars]
 
-    # Populate table
-    styles = ["bold", "dim"]
-    items_groups = (
-        [in_eline, not_in_eline] if not relevant_only else [in_eline]
-    )
-    for items, style in zip(items_groups, styles):
-        for key, value in items:
-            if key.startswith("__"):
-                continue
+        # Populate table
+        styles = ["bold", "dim"]
+        items_groups = (
+            [in_eline, not_in_eline] if not relevant_only else [in_eline]
+        )
+        for items, style in zip(items_groups, styles):
+            for key, value in items:
+                if key.startswith("__"):
+                    continue
 
-            key_text = Text.assemble(
-                (
-                    key,
-                    "scope.key.special"
-                    if key.startswith("__")
-                    else "scope.key",
-                ),
-                (" =", "scope.equals"),
-            )
+                key_text = Text.assemble(
+                    (
+                        key,
+                        "scope.key.special"
+                        if key.startswith("__")
+                        else "scope.key",
+                    ),
+                    (" =", "scope.equals"),
+                )
 
-            # Add to table
-            items_table.add_row(
-                key_text,
-                _print_object(value.obj),
-                value.type,
-                str(value.info),
-                style=style,
-            )
+                # Add to table
+                items_table.add_row(
+                    key_text,
+                    _print_object(value.obj),
+                    value.type,
+                    str(value.info),
+                    style=style,
+                )
+                added_items = True
 
     # make a table with the syntax and the variables
     table = Table(box=None)
     table.add_row("[bold white]Error line:")
     table.add_row(synt)
     table.add_row("")
-    table.add_row("[bold white]Local variables")
-    table.add_row(items_table)
+
+    if added_items:
+        table.add_row("[bold white]Local variables")
+        table.add_row(items_table)
+    else:
+        table.add_row("No local variables to show")
 
     return Panel(
         table,
