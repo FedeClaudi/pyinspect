@@ -1,6 +1,6 @@
-<img src='coverage.svg'>
 [![IssuesCount](https://img.shields.io/github/issues-raw/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/issues-raw/FedeClaudi/pyinspect)
 [![license](https://img.shields.io/github/license/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/license/FedeClaudi/pyinspect)
+<img src='coverage.svg'>
 
 
 # pyinspect
