@@ -35,12 +35,12 @@ def showme(func):
         print(
             f'[black on {mocassin}]`showme` currently does not work with builtin functions like "{_name(func)}", sorry. '
         )
-        return
+        return False
     if not (isfunction(func) or isclass(func)):
         print(
             f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
         )
-        return
+        return False
 
     # Print source class
     class_obj = get_class_that_defined_method(func)
@@ -69,6 +69,8 @@ def showme(func):
         *output,
         Syntax(getsource(func), lexer_name="python", line_numbers=True),
     )
+
+    return True
 
 
 # ---------------------------------------------------------------------------- #

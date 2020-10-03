@@ -5,6 +5,7 @@ from rich.text import Text
 from rich.panel import Panel
 from rich import box
 from rich.syntax import Syntax
+from rich.scope import render_scope as rich_render_scope
 
 import inspect
 from collections import namedtuple
@@ -279,4 +280,4 @@ def get_locals():
         for key, value in caller.frame.f_locals.items()
         if not key.startswith("__")
     }
-    return render_scope(locals_map, title="[i]locals")
+    return rich_render_scope(locals_map, title="[i]locals")
