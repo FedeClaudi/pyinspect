@@ -6,7 +6,6 @@
 <img src='coverage.svg'>
 
 
-
 # pyinspect
 If, like me, when coding often you *know* which function you need but can't quite remember 
 its name, then I have **good news!**. `pyinspect` is here to help you out. 
