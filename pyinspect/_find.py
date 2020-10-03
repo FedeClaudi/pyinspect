@@ -4,8 +4,14 @@ import inspect
 from rich import box, print
 from rich.table import Table
 
-from pyinspect._colors import lightgray, lightgreen, yellow, salmon
-from pyinspect.utils import clean_doc, get_class_that_defined_method, textify
+from pyinspect._colors import lightgray, lightgreen, yellow, salmon, mocassin
+from pyinspect.utils import (
+    clean_doc,
+    get_class_that_defined_method,
+    textify,
+    _name,
+    _module,
+)
 
 
 def print_methods_table(found, class_obj, name):
@@ -41,22 +47,22 @@ def print_methods_table(found, class_obj, name):
             sig = textify(str(signature(cs)), maxlen=50)
 
             if cs == class_obj:
-                cs = f"[{lightgreen}]{cs.__name__}[/{lightgreen}]"
+                cs = f"[{lightgreen}]{_name(cs)}[/{lightgreen}]"
                 method_name = k
             else:
-                cs = f"[{salmon}]{cs.__name__}[/{salmon}]"
+                cs = f"[{salmon}]{_name(cs)}[/{salmon}]"
                 method_name = f"[{salmon}]{k}[/{salmon}]"
 
-            module = f"[white]{v.__module__} [dim](line: {lineno})"
+            module = f"[white]{_module(v)} [dim](line: {lineno})"
 
             table.add_row(
                 str(count), method_name, cs, "", module, sig,
             )
             count += 1
 
-    st = "bold black on yellow"
+    st = f"bold black on {mocassin}"
     print(
-        f"\n[yellow]Looking for methods of [{st}] {class_obj.__name__} ({class_obj.__module__}) [/{st}] with query name: [{st}] {name} [/{st}]:",
+        f"\n[{mocassin}]Looking for methods of [{st}] {_name(class_obj)} ({_module(class_obj)}) [/{st}] with query name: [{st}] {name} [/{st}]:",
         table,
     )
 
@@ -99,8 +105,8 @@ def print_funcs_table(found, module, name):
             table.add_row(str(count), f, text, str(signature(func)))
             count += 1
 
-    st = "black bold on yellow"
+    st = f"black bold on {mocassin}"
     print(
-        f"[yellow]\nLooking for functions of [{st}] {module.__name__} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
+        f"[{mocassin}]\nLooking for functions of [{st}] {_name(module)} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
         table,
     )

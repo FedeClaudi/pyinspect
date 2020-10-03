@@ -7,3 +7,4 @@ lightblue = "#a2f6fc"
 
 yellow = "#FFFACD"
 salmon = "#FA8072"
+mocassin = "#FFE4B5"

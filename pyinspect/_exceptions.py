@@ -10,7 +10,7 @@ import inspect
 from collections import namedtuple
 import numpy as np
 
-from pyinspect.utils import textify, read_single_line
+from pyinspect.utils import textify, read_single_line, _class_name
 from pyinspect._colors import lightgray, yellow, lilla, salmon
 
 PANEL_WIDTH = 125
@@ -25,7 +25,7 @@ def _print_object(obj):
     highlighter = ReprHighlighter()
 
     if isinstance(obj, dict):  # deal with dicts
-        newobj = {k: v.__class__.__name__ for k, v in obj.items()}
+        newobj = {k: _class_name(v) for k, v in obj.items()}
         return Pretty(
             newobj,
             highlighter=highlighter,

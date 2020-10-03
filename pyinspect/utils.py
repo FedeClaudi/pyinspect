@@ -8,11 +8,21 @@ import importlib
 from pathlib import Path
 
 import inspect
-from inspect import getfile, getmodule, isfunction, ismethod, isclass
+from inspect import (
+    getfile,
+    getmodule,
+    isfunction,
+    ismethod,
+    isclass,
+    getsource,
+    isbuiltin,
+)
 import time
 import functools
 
 from io import StringIO
+
+from pyinspect._colors import mocassin
 
 
 def showme(func):
@@ -21,9 +31,16 @@ def showme(func):
 
         :param func: pointer to a python function
     """
-
-    if not (isfunction(func) or isclass(func)) or inspect.isbuiltin(func):
-        raise ValueError("print_function expects a function as argument")
+    if isbuiltin(func):
+        print(
+            f'[black on {mocassin}]`showme` currently does not work with builtin functions like "{_name(func)}", sorry. '
+        )
+        return
+    if not (isfunction(func) or isclass(func)):
+        print(
+            f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
+        )
+        return
 
     # Print source class
     class_obj = get_class_that_defined_method(func)
@@ -31,12 +48,12 @@ def showme(func):
     output = []
     if class_obj is not None:
         output.append(
-            f"\n[bold green] Method [yellow]{func.__name__}[/yellow] from class [magenta]{class_obj.__name__}[/magenta]"
+            f"\n[bold green] Method [yellow]{_name(func)}[/yellow] from class [magenta]{_name(class_obj)}[/magenta]"
         )
 
         output.append(
             Syntax(
-                inspect.getsource(class_obj),
+                getsource(class_obj),
                 lexer_name="python",
                 line_range=(0, 5),
                 line_numbers=True,
@@ -45,20 +62,36 @@ def showme(func):
         output.append("\nmethod code:")
     else:
         output.append(
-            f"\n[bold]Function [yellow]{func.__name__}[/yellow] from [blue]{func.__module__}[/blue]\n"
+            f"\n[bold]Function [yellow]{_name(func)}[/yellow] from [blue]{_module(func)}[/blue]\n"
         )
 
     print(
         *output,
-        Syntax(
-            inspect.getsource(func), lexer_name="python", line_numbers=True
-        ),
+        Syntax(getsource(func), lexer_name="python", line_numbers=True),
     )
 
 
 # ---------------------------------------------------------------------------- #
 #                                    OBJECTS                                   #
 # ---------------------------------------------------------------------------- #
+
+
+def _class(obj):
+    return obj.__class__
+
+
+def _name(obj):
+    return obj.__name__
+
+
+def _class_name(obj):
+    return obj.__class__.__name__
+
+
+def _module(obj):
+    return obj.__module__
+
+
 def get_submodules(module):
     """
         Attempts to find all submodules of a given module object
@@ -68,9 +101,9 @@ def get_submodules(module):
     except Exception:
         path = [getfile(module)]
 
-    modules = {module.__name__: module}
+    modules = {_name(module): module}
     for importer, modname, ispkg in pkgutil.walk_packages(
-        path=path, prefix=module.__name__ + ".", onerror=lambda x: None,
+        path=path, prefix=_name(module) + ".", onerror=lambda x: None,
     ):
         try:
             modules[modname] = importlib.import_module(modname)

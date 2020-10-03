@@ -34,9 +34,11 @@ def search_class_method(
         def get_parent_classes(obj):
             if obj is None:
                 return
+
             parents = obj.__base__
             if parents is None:
                 return
+
             for p in [parents]:
                 get_parent_classes(p)
             objs.append(parents)
