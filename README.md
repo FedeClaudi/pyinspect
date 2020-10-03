@@ -1,5 +1,9 @@
-# pyinspect
+<img src='coverage.svg'>
+[![IssuesCount](https://img.shields.io/github/issues-raw/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/issues-raw/FedeClaudi/pyinspect)
+[![license](https://img.shields.io/github/license/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/license/FedeClaudi/pyinspect)
 
+
+# pyinspect
 If, like me, when coding often you *know* which function you need but can't quite remember 
 its name, then I have **good news!**. `pyinspect` is here to help you out. 
 
@@ -7,7 +11,8 @@ its name, then I have **good news!**. `pyinspect` is here to help you out.
 prints out a handy table with all the functions that met your search criteria.
 
 
-<img src='coverage.svg'>
+
+
 
 ### Installing pyinspect
 It's as simple as:
