@@ -11,7 +11,7 @@ repos:
     - id: flake8
       pass_filenames: true
       # this seems to need to be here in addition to setup.cfg
-      exclude: __init__.py
+      exclude: __init__.py, setup.py
 
 - repo: local
   hooks:

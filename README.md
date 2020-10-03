@@ -6,6 +6,9 @@
 <img src='coverage.svg'>
 
 
+[![Twitter Follow](https://img.shields.io/twitter/follow/Federico_claudi.svg?style=social)](https://twitter.com/Federico_claudi)
+
+
 # pyinspect
 If, like me, when coding often you *know* which function you need but can't quite remember 
 its name, then I have **good news!**. `pyinspect` is here to help you out. 
@@ -41,7 +44,7 @@ funcs = pyinspect.search(plt, name='subplot')
 ```
 
 This results in:
-<img src='media/find_matplotlib.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
+<img src='media/find_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 **note**: search also looks for functions in sub-modules of the module found.
 e.g.  `search(matplotlib...)` will look for methods across the entire `matplotlib` library!
@@ -62,7 +65,7 @@ methods = pyinspect.search(Console, 'export')
 ```
 
 Which gives:
-<img src='media/find_rich.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
+<img src='media/find_class_method.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
 **note**: search also looks for methods matching your query 
@@ -71,7 +74,7 @@ when calling `search` to restrict the search to just the class you've passed.
 
 **PRO TIP:** if you don't pass a search string (e.g. `pyinspect.find(Console)`), `pyinspect.find` will print **all** functions and methods.
 
-\
+
 ## Inspecting functions
 Okay, you've found the function you need, that's great. *But how does it work?*
 
@@ -89,7 +92,7 @@ from rich.console import Console
 import pyinspect
 
 # Print a function's source code
-pyinspect.print_function(Console.export_text)
+pyinspect.print_function(pi.search)
 ```
 
 which yields:

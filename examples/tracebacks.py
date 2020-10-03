@@ -25,7 +25,7 @@ b = "ignore this"  # a local variable not being used
 
 c = np.zeros(4)  # ooops, wrong size
 
-sum(a, c)  # this will give an error
+a + c  # this will give an error
 
 """
     Note: in the traceback a,b will be highlighted because they are in
