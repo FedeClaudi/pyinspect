@@ -5,9 +5,10 @@ from rich.text import Text
 from pprint import PrettyPrinter
 import pkgutil
 import importlib
+from pathlib import Path
 
 import inspect
-from inspect import getfile, getmodule, isfunction, ismethod
+from inspect import getfile, getmodule, isfunction, ismethod, isclass
 import time
 import functools
 
@@ -20,7 +21,8 @@ def showme(func):
 
         :param func: pointer to a python function
     """
-    if not (inspect.isfunction(func) or inspect.isbuiltin(func)):
+
+    if not (isfunction(func) or isclass(func)) or inspect.isbuiltin(func):
         raise ValueError("print_function expects a function as argument")
 
     # Print source class
@@ -116,6 +118,24 @@ def get_class_that_defined_method(meth):
 # ---------------------------------------------------------------------------- #
 #                                  SMALL STUFF                                 #
 # ---------------------------------------------------------------------------- #
+def read_single_line(fpath, lineno):
+    """
+        Read a single line from a given path
+    """
+    if not isinstance(lineno, int):
+        raise ValueError(
+            "When reading a single line from file, lineno should be a number"
+        )
+
+    if not Path(fpath).exists():
+        raise FileExistsError(
+            "When reading a single line from file: the file doesnt exist!"
+        )
+
+    with open(fpath, "r") as f:
+        for i, line in enumerate(f):
+            if i == lineno:
+                return line
 
 
 def textify(obj, maxlen=31):

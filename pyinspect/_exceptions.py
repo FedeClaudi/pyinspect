@@ -10,11 +10,11 @@ import inspect
 from collections import namedtuple
 import numpy as np
 
-from pyinspect.utils import textify
+from pyinspect.utils import textify, read_single_line
 from pyinspect._colors import lightgray, yellow, lilla, salmon
 
 PANEL_WIDTH = 125
-local = namedtuple("local", "key, obj, type, info")
+local = namedtuple("local", "key, obj, type, info, eline")
 
 
 def _print_object(obj):
@@ -39,7 +39,6 @@ def _print_object(obj):
 
     elif isinstance(obj, np.ndarray):  # deal with numpy arrays
         return textify(obj)
-
     else:  # deal with everything else
         return Pretty(
             obj, highlighter=highlighter, justify="left", overflow="ellipsis"
@@ -58,6 +57,18 @@ def render_scope(synt, scope, *, title=None, sort_keys=True):
         """Sort special variables first, then alphabetically."""
         key, _ = item
         return (not key.startswith("__"), key.lower())
+
+    def get_variables_in_line(eline):
+        """Given a string with a line of code, it founds variable names in it"""
+        # Isolte words
+        eline = eline.replace("\n", " ").replace("\t", " ")
+        chrs = "(),.="
+        for ch in chrs:
+            eline = eline.replace(ch, " ")
+
+        # get all single words
+        names = eline.split(" ")
+        return names
 
     # Make table
     items_table = Table(
@@ -91,21 +102,36 @@ def render_scope(synt, scope, *, title=None, sort_keys=True):
         sorted(scope.items(), key=sort_items) if sort_keys else scope.items()
     )
 
-    # Populate table
-    for key, value in items:
-        if key.startswith("__"):
-            continue
-        key_text = Text.assemble(
-            (
-                key,
-                "scope.key.special" if key.startswith("__") else "scope.key",
-            ),
-            (" =", "scope.equals"),
-        )
+    # Split items to get variables in error line
+    linevars = get_variables_in_line(items[0][1].eline)
+    in_eline = [itm for itm in items if itm[0] in linevars]
+    not_in_eline = [itm for itm in items if itm[0] not in linevars]
 
-        items_table.add_row(
-            key_text, _print_object(value.obj), value.type, str(value.info),
-        )
+    # Populate table
+    styles = ["bold", "dim"]
+    for items, style in zip((in_eline, not_in_eline), styles):
+        for key, value in items:
+            if key.startswith("__"):
+                continue
+
+            key_text = Text.assemble(
+                (
+                    key,
+                    "scope.key.special"
+                    if key.startswith("__")
+                    else "scope.key",
+                ),
+                (" =", "scope.equals"),
+            )
+
+            # Add to table
+            items_table.add_row(
+                key_text,
+                _print_object(value.obj),
+                value.type,
+                str(value.info),
+                style=style,
+            )
 
     # make a table with the syntax and the variables
     table = Table(box=None)
@@ -148,7 +174,6 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
     while f:
         stack.append(f)
         f = f.f_back
-
     stack.reverse()
 
     if len(stack) > keep_frames:
@@ -157,12 +182,16 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
         else:
             stack = [stack[-1]]
 
+    # Make a locals panel for each frame
     panels = []
     for f in stack:
         # get filepath
         fpath = f.f_code.co_filename
 
-        # get error line
+        # Get error line as text
+        eline = read_single_line(fpath, f.f_lineno - 1)
+
+        # get error line as Syntax
         synt = Syntax.from_path(
             fpath,
             line_numbers=True,
@@ -183,7 +212,7 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
 
             # Check if object should be included
             if not all_locals:
-
+                # Skip a bunch of stuff
                 if (
                     inspect.isfunction(v)
                     or inspect.ismodule(v)
@@ -203,7 +232,6 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
                 info = ""
 
             # get type color
-
             if "function" in _type:
                 type_color = yellow
             elif "module" in _type:
@@ -213,17 +241,18 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
             else:
                 type_color = "white"
 
+            # Store all info
             locs[k] = local(
                 k,
                 v,
                 f"[{lightgray}]{_type}".replace(".", f".[{type_color}]"),
                 info,
+                eline,
             )
 
         # make panel
         title = f"[i #D3D3D3]file: [bold underline]{text}[/bold underline] line {f.f_lineno}"
         panels.append(render_scope(synt, locs, title=title))
-
     return panels
 
 
