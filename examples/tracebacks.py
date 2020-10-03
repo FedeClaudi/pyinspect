@@ -20,4 +20,19 @@ def sum(a, b):
 a = np.ones(5)
 b = np.zeros(4)
 
-sum(a, b)
+a = np.ones(5)
+b = "ignore this"  # a local variable not being used
+
+c = np.zeros(4)  # ooops, wrong size
+
+sum(a, c)  # this will give an error
+
+"""
+    Note: in the traceback a,b will be highlighted because they are in
+    the line causing the error. 'b' will be shown as well though. 
+    To only show the variables in the error line
+    pass relevant_only=True to `install_traceback`
+
+    To only show relevant variables, pass 'only_relevant=True' to 
+    `pyinspect.install_traceback`.
+"""

@@ -45,7 +45,7 @@ def _print_object(obj):
         )
 
 
-def render_scope(synt, scope, *, title=None, sort_keys=True):
+def render_scope(synt, scope, *, title=None, relevant_only=False):
     """
         Creates a rich panel display a 'frame' in a traceback
         stack. It include a clickable link to the source filepath,
@@ -98,9 +98,7 @@ def render_scope(synt, scope, *, title=None, sort_keys=True):
     )
 
     # sort items
-    items = (
-        sorted(scope.items(), key=sort_items) if sort_keys else scope.items()
-    )
+    items = sorted(scope.items(), key=sort_items)
 
     # Split items to get variables in error line
     linevars = get_variables_in_line(items[0][1].eline)
@@ -109,7 +107,10 @@ def render_scope(synt, scope, *, title=None, sort_keys=True):
 
     # Populate table
     styles = ["bold", "dim"]
-    for items, style in zip((in_eline, not_in_eline), styles):
+    items_groups = (
+        [in_eline, not_in_eline] if not relevant_only else [in_eline]
+    )
+    for items, style in zip(items_groups, styles):
         for key, value in items:
             if key.startswith("__"):
                 continue
@@ -152,7 +153,9 @@ def render_scope(synt, scope, *, title=None, sort_keys=True):
     )
 
 
-def inspect_traceback(tb, keep_frames=2, all_locals=False):
+def inspect_traceback(
+    tb, keep_frames=2, all_locals=False, relevant_only=False
+):
     """
         Get the whole traceback stack with 
         locals at each frame and expand the local
@@ -252,7 +255,9 @@ def inspect_traceback(tb, keep_frames=2, all_locals=False):
 
         # make panel
         title = f"[i #D3D3D3]file: [bold underline]{text}[/bold underline] line {f.f_lineno}"
-        panels.append(render_scope(synt, locs, title=title))
+        panels.append(
+            render_scope(synt, locs, title=title, relevant_only=relevant_only)
+        )
     return panels
 
 

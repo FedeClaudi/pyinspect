@@ -33,15 +33,19 @@ def print_exception(message=None, traceback=None, **kwargs):
     print(message, traceback, "\n", get_locals(), sep="\n")
 
 
-def install_traceback(keep_frames=2, hide_locals=False, all_locals=False):
+def install_traceback(
+    keep_frames=2, hide_locals=False, all_locals=False, relevant_only=False
+):
     """
         Install an improved rich traceback handler (it includes a view of the local variables).
         Once installed, any tracebacks will be printed with syntax highlighting and rich formatting.
 
         :param keep_frames: int. Keep only the last N frames for traceback with the more relevant data
         :param hide_locals: bool, False. If True local variables are not printed
-        :all_locals: bool, False. If True all locals (e.g. including imported modules) are shown.
+        :param all_locals: bool, False. If True all locals (e.g. including imported modules) are shown.
             Otherwise only variables are shown
+        :param relevant_only: bool, False. If True only the variables in the error
+            line are shown, otherwise all variables are shown. 
     """
     traceback_console = Console(
         file=sys.stderr, theme=Theme(rich.default_styles.DEFAULT_STYLES)
@@ -53,7 +57,10 @@ def install_traceback(keep_frames=2, hide_locals=False, all_locals=False):
         if not hide_locals:
             traceback_console.print(
                 *inspect_traceback(
-                    traceback, keep_frames=keep_frames, all_locals=all_locals
+                    traceback,
+                    keep_frames=keep_frames,
+                    all_locals=all_locals,
+                    relevant_only=relevant_only,
                 ),
                 "",
                 Traceback.from_exception(type_, value, traceback),
