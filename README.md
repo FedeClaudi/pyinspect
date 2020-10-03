@@ -1,6 +1,10 @@
-<img src='coverage.svg'>
 [![IssuesCount](https://img.shields.io/github/issues-raw/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/issues-raw/FedeClaudi/pyinspect)
 [![license](https://img.shields.io/github/license/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/license/FedeClaudi/pyinspect)
+[![language](https://img.shields.io/github/languages/top/FedeClaudi/pyinspect.svg)](https://img.shields.io/github/languages/top/FedeClaudi/pyinspect)
+[![language](https://img.shields.io/github/last-commit/FedeClaudi/pyinspect/master.svg)](https://img.shields.io/github/last-commit/FedeClaudi/pyinspect/master)
+[![language](https://img.shields.io/github/stars/FedeClaudi/pyinspect?style=social.svg)](https://img.shields.io/github/stars/FedeClaudi/pyinspect?style=social)
+<img src='coverage.svg'>
+
 
 
 # pyinspect
@@ -9,8 +13,6 @@ its name, then I have **good news!**. `pyinspect` is here to help you out.
 
 `pyinspect` allows you to search for functions and class methods based on their name and 
 prints out a handy table with all the functions that met your search criteria.
-
-
 
 
 
