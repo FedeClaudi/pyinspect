@@ -18,3 +18,5 @@ exclude = '''
   )/
 )
 '''
+[tool.pycln]
+all = true
