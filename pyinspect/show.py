@@ -3,7 +3,8 @@ from rich.syntax import Syntax
 
 from inspect import isfunction, ismethod, isclass, getsource, isbuiltin
 
-from pyinspect._colors import mocassin, salmon, MonokaiStyle
+from pyinspect._colors import mocassin, salmon, Monokai, DimMonokai
+
 from pyinspect.utils import (
     _class_name,
     get_class_that_defined_method,
@@ -37,7 +38,7 @@ def showme(func):
     if class_obj is not None:
         # showing a class method, also include class initial definition in the output
         output.append(
-            f"\n[boldreen] Method [yellow]{_name(func)}[/yellow] from class [blue]{_name(class_obj)}[/blue]"
+            f"\n[bold green] Method [yellow]{_name(func)}[/yellow] from class [blue]{_name(class_obj)}[/blue]"
         )
 
         # get end of class docstring
@@ -59,7 +60,7 @@ def showme(func):
                     lexer_name="python",
                     line_range=(0, doc_end),
                     line_numbers=True,
-                    theme=MonokaiStyle,
+                    theme=DimMonokai,
                 ),
                 f"\n[bold {salmon}]Method code:",
             ]
@@ -75,7 +76,7 @@ def showme(func):
             getsource(func),
             lexer_name="python",
             line_numbers=True,
-            theme=MonokaiStyle,
+            theme=Monokai,
         ),
     )
 

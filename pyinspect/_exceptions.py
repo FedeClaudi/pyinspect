@@ -12,7 +12,7 @@ from collections import namedtuple
 import numpy as np
 
 from pyinspect.utils import textify, read_single_line, _class_name
-from pyinspect._colors import lightgray, yellow, lilla, salmon, MonokaiStyle
+from pyinspect._colors import lightgray, yellow, lilla, salmon, Monokai
 
 PANEL_WIDTH = 125
 local = namedtuple("local", "key, obj, type, info, eline")
@@ -208,7 +208,7 @@ def inspect_traceback(
             line_numbers=True,
             line_range=[f.f_lineno, f.f_lineno],
             code_width=PANEL_WIDTH,
-            theme=MonokaiStyle,
+            theme=Monokai,
         )
 
         # make clickable filepath
