@@ -22,10 +22,10 @@ You can also use `pyinspect` to print a function's code directly in your termina
 
 
 # Table of Contents
-1. [Installing pyinspect](##Installing pyinspect)
-2. [ExamplFinding functionse2](#Findingfunctions)
-3. [Third Example](#third-example)
-4. [Fourth Example](#fourth-examplehttpwwwfourthexamplecom)
+1. [Installing pyinspect](https://github.com/FedeClaudi/pyinspect#installing-pyinspect)
+2. [Finding functions](https://github.com/FedeClaudi/pyinspect#finding-functions)
+3. [Inspecting functions](https://github.com/FedeClaudi/pyinspect#inspecting-functions)
+4. [Tracebacks](https://github.com/FedeClaudi/pyinspect#tracebacks)
 
 
 ## Installing pyinspect
