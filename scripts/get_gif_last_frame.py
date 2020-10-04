@@ -26,7 +26,9 @@ def get(fpath):
     im.save(str(fld / newname), format="png")
 
     print(f"Saving image at : {str(fld / newname)}")
-    os.remove(fpath)
+
+    if "intro" not in fpath:
+        os.remove(fpath)
 
 
 if __name__ == "__main__":

@@ -30,11 +30,11 @@ repeat: 0
 
 # Quality
 # 1 - 100
-quality: 80
+quality: 50
 
 # Delay between frames in ms
 # If the value is `auto` use the actual recording delays
-frameDelay: auto # 10
+frameDelay: 100
 
 # Maximum delay between frames in ms
 # Ignored if the `frameDelay` isn't set to `auto`
@@ -50,7 +50,7 @@ frameBox:
   title: Pyinspect
   style:
     border: 0px black solid
-    boxShadow: 4px 4px 4px rgba(0, 0, 0, .4)
+    boxShadow: 6px 6px 8px rgba(0, 0, 0, .6)
     margin: 20px
 
 # Add a watermark image to the rendered gif
