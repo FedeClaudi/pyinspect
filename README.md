@@ -75,6 +75,7 @@ methods = pyinspect.search(Console, 'export')
 ```
 
 Which gives:
+
 <img src='media/find_class_method.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
@@ -102,6 +103,7 @@ pi.showme(pi.search)
 ```
 
 which yields:
+
 <img src='media/print_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
