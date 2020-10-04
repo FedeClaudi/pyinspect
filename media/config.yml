@@ -50,7 +50,7 @@ frameBox:
   title: Pyinspect
   style:
     border: 0px black solid
-    boxShadow: 12px 12px 12px rgba(0, 0, 0, .8)
+    boxShadow: 4px 4px 4px rgba(0, 0, 0, .4)
     # margin: 0px
 
 # Add a watermark image to the rendered gif

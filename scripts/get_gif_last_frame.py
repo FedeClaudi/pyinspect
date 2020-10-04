@@ -2,6 +2,7 @@ from PIL import Image
 from pathlib import Path
 import click
 import pyinspect as pi
+import os
 
 
 pi.install_traceback()
@@ -25,7 +26,7 @@ def get(fpath):
     im.save(str(fld / newname), format="png")
 
     print(f"Saving image at : {str(fld / newname)}")
-    # os.remove(fpath)
+    os.remove(fpath)
 
 
 if __name__ == "__main__":
