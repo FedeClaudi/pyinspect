@@ -1,11 +1,10 @@
-from rich import print
-from rich.syntax import Syntax
 from rich.console import Console
 from rich.text import Text
 from pprint import PrettyPrinter
 import pkgutil
 import importlib
 from pathlib import Path
+import ast
 
 import inspect
 from inspect import (
@@ -16,61 +15,12 @@ from inspect import (
     isclass,
     getsource,
     isbuiltin,
+    getdoc,
 )
 import time
 import functools
 
 from io import StringIO
-
-from pyinspect._colors import mocassin
-
-
-def showme(func):
-    """
-        Given a pointer to a python function, it prints the code of the function. 
-
-        :param func: pointer to a python function
-    """
-    if isbuiltin(func):
-        print(
-            f'[black on {mocassin}]`showme` currently does not work with builtin functions like "{_name(func)}", sorry. '
-        )
-        return False
-    if not (isfunction(func) or isclass(func) or ismethod(func)):
-        print(
-            f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
-        )
-        return False
-
-    # Print source class
-    class_obj = get_class_that_defined_method(func)
-
-    output = []
-    if class_obj is not None:
-        output.append(
-            f"\n[bold green] Method [yellow]{_name(func)}[/yellow] from class [magenta]{_name(class_obj)}[/magenta]"
-        )
-
-        output.append(
-            Syntax(
-                getsource(class_obj),
-                lexer_name="python",
-                line_range=(0, 5),
-                line_numbers=True,
-            )
-        )
-        output.append("\nmethod code:")
-    else:
-        output.append(
-            f"\n[bold]Function [yellow]{_name(func)}[/yellow] from [blue]{_module(func)}[/blue]\n"
-        )
-
-    print(
-        *output,
-        Syntax(getsource(func), lexer_name="python", line_numbers=True),
-    )
-
-    return True
 
 
 # ---------------------------------------------------------------------------- #
@@ -211,3 +161,31 @@ def clean_doc(doc, maxn=47):
             return doc[:maxn] + "..."
         else:
             return doc
+
+
+def get_end_of_doc_lineno(obj):
+    """
+        Given a class or a function it returns the number
+        of the line at which the docstring ends
+    """
+    # check argument
+    if not isclass(obj) and not (isfunction(obj) or isbuiltin(obj)):
+        raise ValueError(
+            f"get_end_of_doc_lineno expects a class or a function as input, not {_class_name(obj)}"
+        )
+
+    # Check docstring
+    if getdoc(obj) is None:
+        return None
+
+    root = ast.parse(getsource(obj))
+    for node in ast.walk(root):
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module)):
+
+            if (
+                node.body
+                and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, ast.Str)
+            ):
+
+                return node.body[0].value.lineno
