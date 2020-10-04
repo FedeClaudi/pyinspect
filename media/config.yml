@@ -34,7 +34,7 @@ quality: 80
 
 # Delay between frames in ms
 # If the value is `auto` use the actual recording delays
-frameDelay: 10
+frameDelay: auto # 10
 
 # Maximum delay between frames in ms
 # Ignored if the `frameDelay` isn't set to `auto`
@@ -90,7 +90,7 @@ theme:
   foreground: "#afafaf"
   cursor: "#c7c7c7"
   black: "#232628"
-  red: "#fc4384"
+  red: "#D80000"
   green: "#b3e33b"
   yellow: "#ffa727"
   blue: "#75dff2"

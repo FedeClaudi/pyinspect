@@ -16,6 +16,7 @@ its name, then I have **good news!**. `pyinspect` is here to help you out.
 `pyinspect` allows you to search for functions and class methods based on their name and 
 prints out a handy table with all the functions that met your search criteria.
 
+[![gif](media/intro_crop.gif)](media/intro_crop.gif)
 
 
 ### Installing pyinspect

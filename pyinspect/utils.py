@@ -36,7 +36,7 @@ def showme(func):
             f'[black on {mocassin}]`showme` currently does not work with builtin functions like "{_name(func)}", sorry. '
         )
         return False
-    if not (isfunction(func) or isclass(func)):
+    if not (isfunction(func) or isclass(func) or ismethod(func)):
         print(
             f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
         )

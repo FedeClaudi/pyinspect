@@ -107,6 +107,6 @@ def print_funcs_table(found, module, name):
 
     st = f"black bold on {mocassin}"
     print(
-        f"[{mocassin}]\nLooking for functions of [{st}] {_name(module)} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
+        f"[{mocassin}]Looking for functions of [{st}] {_name(module)} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
         table,
     )

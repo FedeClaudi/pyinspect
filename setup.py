@@ -17,7 +17,7 @@ setup(
     long_description=long_description,
     long_description_content_type="text/markdown",
     install_requires=requirements,
-    extras_require={"dev": ["coverage-badge"]},
+    extras_require={"dev": ["coverage-badge", "click"]},
     python_requires=">=3.6,",
     packages=find_namespace_packages(),
     include_package_data=True,

@@ -1,0 +1,1 @@
+Bash and python scripts to use [terminalizer](https://github.com/faressoft/terminalizer) to record gifs of pyinspect doing its thing in the terminal and extract images from them.

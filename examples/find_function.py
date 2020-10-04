@@ -5,7 +5,8 @@
 
 # import the module whose functions you're looking for
 import matplotlib.pyplot as plt
-import matplotlib
+
+# import matplotlib
 
 # import pyinspect
 import pyinspect as pi
@@ -14,7 +15,7 @@ import pyinspect as pi
 pi.search(plt, name="subplot")
 
 # Or look for it in the entire package!
-pi.search(matplotlib, name="subplot")
+# pi.search(matplotlib, name="subplot")
 
 
 """

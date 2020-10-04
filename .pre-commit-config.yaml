@@ -13,11 +13,19 @@ repos:
       # this seems to need to be here in addition to setup.cfg
       exclude: __init__.py, setup.py
 
+
 - repo: local
   hooks:
+    - id: pytest
+      name: pytest
+      entry: bash -c 'pytest'
+      language: system
+      types: [python]
+      pass_filenames: false
     - id: make_coverage_badge
       name: make_coverage_badge
       entry: bash -c 'rm coverage.svg;coverage-badge -o coverage.svg'
       language: system
       types: [python]
       pass_filenames: false
+

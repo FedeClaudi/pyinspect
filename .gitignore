@@ -2,7 +2,10 @@
 .vscode
 workspace.py
 
+media/temp
 media/*.yml
+media/*.mp4
+media/intro.gif
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
