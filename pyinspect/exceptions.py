@@ -7,6 +7,7 @@ from rich.theme import Theme
 
 from pyinspect.utils import timestamp
 from pyinspect._exceptions import inspect_traceback, get_locals
+from pyinspect.what_the_heck.what_the_heck import cache_error
 
 
 def print_exception(message=None, traceback=None, **kwargs):
@@ -54,6 +55,10 @@ def install_traceback(
     def excepthook(
         type_, value, traceback,
     ):
+        # cache error message
+        cache_error(f"{type_.__name__}: {value.args[0]}")
+
+        # show error traceback
         if not hide_locals:
             traceback_console.print(
                 *inspect_traceback(

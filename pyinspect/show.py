@@ -11,6 +11,7 @@ from pyinspect.utils import (
     get_end_of_doc_lineno,
     _name,
     _module,
+    _class,
 )
 
 
@@ -26,10 +27,22 @@ def showme(func):
         )
         return False
     if not (isfunction(func) or isclass(func) or ismethod(func)):
-        print(
-            f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
-        )
-        return False
+        # check if it's a class instance
+        try:
+            func = _class(func)
+            getsource(func)  # fails on builtins
+            if not isclass(func):
+                raise TypeError
+        except (AttributeError, TypeError):
+            print(
+                f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
+            )
+            return False
+
+        if isclass(func):
+            print(
+                f"[{mocassin}]The object passed is a class instance, printing source code for the class definition"
+            )
 
     # Print source class
     class_obj = get_class_that_defined_method(func)
