@@ -8,6 +8,8 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 requirements = [
     "rich",
     "numpy",
+    "google",
+    "bs4",
 ]
 
 setup(
