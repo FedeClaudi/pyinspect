@@ -51,7 +51,7 @@ frameBox:
   style:
     border: 0px black solid
     boxShadow: 4px 4px 4px rgba(0, 0, 0, .4)
-    # margin: 0px
+    margin: 20px
 
 # Add a watermark image to the rendered gif
 # You need to specify an absolute path for
