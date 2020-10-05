@@ -10,22 +10,26 @@
 [![Twitter Follow](https://img.shields.io/twitter/follow/Federico_claudi.svg?style=social)](https://twitter.com/Federico_claudi)
 
 
-# pyinspect
-If, like me, when coding often you *know* which function you need but can't quite remember 
-its name, then I have **good news!**. `pyinspect` is here to help you out. 
+# pyinspect - the python package for lazy programmers
+**Don't remember a function's name?** Use `pyinspect` to look for it.
+**Don't remember what a function does?** Use `pyinspect` to print its source code directly to your terminal
+**Can't figure out why you keep getting an error?** Use `pyinspect`'s fancy tracebacks to get more info
+**Still can't figure it out, but too lazy to google it?** Use `pyinspect` to print Stack Overflow's top answer for your error message directly to your terminal!
 
-`pyinspect` allows you to search for functions and class methods based on their name and 
-prints out a handy table with all the functions that met your search criteria.
-You can also use `pyinspect` to print a function's code directly in your terminal so that you can remind yourself what it does without having to open any file!
+<!--! # TODO update GIF -->
 
 [![gif](media/intro_cut.gif)](media/intro_cut.gif)
-
+<p align="center">
+An example of how `pyinspect` can be used to find and inspect functions lazily.
+</p>
 
 # Table of Contents
 1. [Installing pyinspect](https://github.com/FedeClaudi/pyinspect#installing-pyinspect)
-2. [Finding functions](https://github.com/FedeClaudi/pyinspect#finding-functions)
-3. [Inspecting functions](https://github.com/FedeClaudi/pyinspect#inspecting-functions)
-4. [Tracebacks](https://github.com/FedeClaudi/pyinspect#tracebacks)
+2. [Can't remember a variable's name...]((https://github.com/FedeClaudi/pyinspect#finding-functions))
+3. [Can't remember a function's name...](https://github.com/FedeClaudi/pyinspect#finding-functions)
+4. [Can't remember what a function does](https://github.com/FedeClaudi/pyinspect#inspecting-functions)
+5. [Can't fix that bug...](https://github.com/FedeClaudi/pyinspect#tracebacks)
+6. [Still can't fix that bug!](https://github.com/FedeClaudi/pyinspect#tracebacks)
 
 
 ## Installing pyinspect
@@ -34,49 +38,52 @@ It's as simple as:
 pip install pyinspect
 ```
 
+## Can't remember a variable's name...
+Allright, you've defined a bunch of variables and now can't remember the name or content of the one you need. Fear not, you can use `pyinspect` to print all variables in your local scope:
 
-## Finding functions
-The easiest way to grasp how `pyinspect` can help is with an example.
-> Imagine that you just can't remember which `matplotlib.pyplot` method you need to create a figure with subplots... 
-> 
-this is how you use `pyinspect` to find the function you need:
+``` python
 
+    import pyinspect as pi
+
+    a = 'my variable'
+    b = 'another variable'
+
+    pi.what()  # print all local variables
+```
+
+or to look at a single variable:
+```
+    pi.what(a)
+```
+
+<!--! # TODO add image with this -->
+
+## Can't remember a function's name...
+That's okay! You can use `pyinspect` to search for a function in a module or for a class' method!
+E.g. to look for functions with `sin` in their name in `numpy`:
 
 ``` python
 # import the module whose functions you're looking for
-import matplotlib.pyplot as plt
+import numpy as np
 
 # import pyinspect
-import pyinspect
+import pyinspect as pi
 
 # Find the functions you're looking for
-funcs = pyinspect.search(plt, name='subplot')
+pyinspect.search(np, name='sin')
 ```
+
 
 This results in a table with all the function's matching your search `name`:
+<!--! # TODO update -->
 <img src='media/find_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
-**note**: search also looks for functions in sub-modules of the module found.
+>**note**: search also looks for functions in sub-modules of the module found.
 e.g.  `search(matplotlib...)` will look for methods across the entire `matplotlib` library!
 
-\
+
 `pyinspect.find` can also be used to find class attributes. For example,
 say that you're looking for a method with `export` in the name in `rich.console.Console`:
-
-``` python
-# import the class you need to inspect
-from rich.console import Console
-
-# import pyinspect
-import pyinspect
-
-# find class methods
-methods = pyinspect.search(Console, 'export')
-```
-
-Which gives:
-
-<img src='media/find_class_method.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
 >**note**: search also looks for methods matching your query 
@@ -87,13 +94,10 @@ Methods of the parent class are highlighted in a different color!
 >**PRO TIP:** if you don't pass a search name to `pyinspect.search` (e.g. `pyinspect.find(Console)`), `pyinspect.search` will print **all** functions and methods.
 
 
-## Inspecting functions
+## Can't remember what a function does
 Okay, you've found the function you need, that's great. *But how does it work?*
+You could open a the file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to terminal:
 
-What if, in addition to the exact name, you've forgotten which arguments it takes, or what it does exactly. Well, `pyinspect` can help you there as well!
-You can use `pyinspect.print_function` to **print the source code of any function or attribute directly in your terminal**. This way you can inspect what the function does without having to open any file!
-
-This is how to do it:
 ``` python 
 # import pyinspect
 import pyinspect as pi
@@ -103,13 +107,15 @@ pi.showme(pi.search)
 ```
 
 which yields:
+<!--! # TODO update -->
 
 <img src='media/print_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
 
-## Tracebacks
-Finally, `pyinspect` builds upon `rich`'s awesome `traceback` functionality to 
-print nicely formatted tracebacks **and** show the `local variables` when the exception came up.
+## Can't fix that bug...
+Sometimes you know what's causing an error, sometimes you don't. When you don't, it helps to know what the variables involved in the error are, possibly without having to go through the extra work of debugging stuff!
+
+Once again `pyinspect` has a labour-saving solution: an advanced `traceback` functionality that gives you all the information you need to fix your bug (hopefully!). Just install `pyinspect`'s traceback at the start of your script
 
 E.g.:
 ``` python
@@ -129,6 +135,7 @@ a + c  # this will give an error
 ```
 
 and this is the traceback:
+<!-- ! #  TODO update -->
 
 <img src='media/traceback.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
 
@@ -138,6 +145,15 @@ and this is the traceback:
 * if you want to show **all** items in the `local` scope (e.g. also imported modules, not just variables) then you can use `all_locals=True` in `pi.install_traceback()`
 * if you don't want the locals to be shown at all, then use `hide_locals=True`
 * if you want more or less extensive tracebacks, you can use `keep_frames` to decide how many `frames` to shown in nested tracebacks (i.e when a function `a` calls a function `b` and the error comes up in `b`, do you want to see only the locals in `b` or in `a` *and* `b`?)
+
+
+## Still can't fix that bug!
+Time to do what any real programmer does in this situation... google it / copy-paste an answer from Stack Overflow. But that involves pulling up your browser, opening a new tab, typing stuf... too much work!
+
+When an error comes up, `pyinspect` gives you the opportunity to automate this work away: just type `s` in your terminal and `pyinspect` will give you links to google's top 3 solutions and print out the answer to Stack Overflow's top question related to your error!
+
+<!-- ! #  TODO add image -->
+
 
 ## Contributing
 Contributions are welcome! Start a pull request if you have a change you'd like to submit or open an issue to report a bug or request a new feature to be added to `pyinspect`
