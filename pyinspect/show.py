@@ -15,6 +15,28 @@ from pyinspect.utils import (
 )
 
 
+def show_locals():
+    # TODO
+    pass
+
+
+def show_var(var):
+    # TODO:
+    pass
+
+
+def show(var=None):
+    """
+        Shows the details of a single variable or an
+        overview of what's in the local scope.
+    """
+
+    if var is None:
+        show_locals()
+    else:
+        show_var(var)
+
+
 def showme(func):
     """
         Given a pointer to a python function, it prints the code of the function. 

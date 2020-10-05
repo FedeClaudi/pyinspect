@@ -10,6 +10,7 @@ requirements = [
     "numpy",
     "google",
     "bs4",
+    "click",
 ]
 
 setup(
@@ -26,5 +27,7 @@ setup(
     url="https://github.com/FedeClaudi/pyinspect",
     author="Federico Claudi",
     zip_safe=False,
-    # entry_points={"console_scripts": ["pydoc2md = pydoc2md.cli:run"]},
+    entry_points={
+        "console_scripts": ["why = pyinspect.answers: cli_get_answers"]
+    },
 )

@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 from rich.console import Console
 from googlesearch import search
+import click
 
 from pyinspect._colors import (
     mocassin,
@@ -84,7 +85,7 @@ def _get_link_so_top_answer(query):
         return None, search_url
 
     # get link to top anser
-    bs = BeautifulSoup(res.content, "lxml")
+    bs = BeautifulSoup(res.content, features="html.parser")
     link = bs.find("a", attrs={"class": "question-hyperlink"})
 
     if link is None:
@@ -130,7 +131,7 @@ def get_google(query):
     console.print(
         f"[{mocassin}]Links to the top 3 results on [{lilla}]google.com[/{lilla}] for your error:"
     )
-    for j in search("python " + query, tld="co.in", num=3, stop=3, pause=0.5):
+    for j in search("python " + query, tld="co.in", num=3, stop=3, pause=0.15):
         console.print(
             f"       [{ls}]"
             + _highlight_link(query, j, website="stackoverflow.com"),
@@ -157,3 +158,8 @@ def get_answers():
     get_google(query)
     console.print("")
     get_stackoverflow(query)
+
+
+@click.command()
+def cli_get_answers():
+    get_answers()
