@@ -5,7 +5,14 @@ from rich.console import Console
 from googlesearch import search
 
 
-from pyinspect._colors import mocassin, salmon, lilla, lightblue, lightgray
+from pyinspect._colors import (
+    mocassin,
+    salmon,
+    lilla,
+    lightblue,
+    lightgray,
+    lightlilla,
+)
 
 SO_url = "http://stackoverflow.com"
 console = Console(highlight=False)
@@ -31,7 +38,7 @@ def load_cached():
     return txt.split("-x-")
 
 
-def _highlight_link(query, url):
+def _highlight_link(query, url, website=""):
     """
         Highlights the part of a link corresponding to a search query
 
@@ -44,11 +51,13 @@ def _highlight_link(query, url):
     else:
         q = query
 
-    try:
-        before, after = url.split(q)
-        return before + f"[{lightblue}]{q}[/{lightblue}]" + after
-    except ValueError:
-        return url
+    for string, color in zip((website, q), (lightlilla, lightblue)):
+        try:
+            before, after = url.split(string)
+            url = before + f"[{color}]{string}[/{color}]" + after
+        except ValueError:
+            return url
+    return url
 
 
 def _get_link_so_top_answer(query):
@@ -93,10 +102,16 @@ def get_stackoverflow(query):
 
     console.print(
         f"[{mocassin}]Link to top [{lilla}]Stack Overflow[/{lilla}] question for your error: ",
-        f"       [{ls}]" + _highlight_link(query, SO_url + questionlink) + "/",
+        f"       [{ls}]"
+        + _highlight_link(
+            query, SO_url + questionlink, website="stackoverflow.com"
+        )
+        + "/",
         "",
         f"[{mocassin}]To find more related answers on [{lilla}]Stack Overflow[/{lilla}], visit: ",
-        f"       [{ls}]" + _highlight_link(query, search_url) + "/",
+        f"       [{ls}]"
+        + _highlight_link(query, search_url, website="stackoverflow.com")
+        + "/",
         sep="\n",
     )
 
@@ -109,7 +124,11 @@ def get_google(query):
         f"[{mocassin}]Links to the top 3 results on [{lilla}]google.com[/{lilla}] for your error:"
     )
     for j in search("python " + query, tld="co.in", num=3, stop=3, pause=0.5):
-        console.print(f"       [{ls}]" + _highlight_link(query, j), "")
+        console.print(
+            f"       [{ls}]"
+            + _highlight_link(query, j, website="stackoverflow.com"),
+            "",
+        )
 
 
 def get_answers():
