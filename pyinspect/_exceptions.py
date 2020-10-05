@@ -236,7 +236,10 @@ def inspect_traceback(
 
             # Get some additional info
             if isinstance(v, np.ndarray):
-                info = f"[#808080]Shape: {v.shape} max: {v.max()} min: {v.min()} has nan: {np.any(np.isnan(v))}"
+                try:
+                    info = f"[#808080]Shape: {v.shape} max: {v.max()} min: {v.min()} has nan: {np.any(np.isnan(v))}"
+                except TypeError:  # array contains non-number values
+                    info = f"[#808080]Shape: {v.shape}, contains non-number objects"
             elif isinstance(v, (list, tuple, str)):
                 info = f"[#808080]Length: {len(v)}"
             else:
