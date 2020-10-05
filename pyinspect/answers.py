@@ -1,9 +1,7 @@
-from pyinspect.what_the_heck import error_cache
 import requests
 from bs4 import BeautifulSoup
 from rich.console import Console
 from googlesearch import search
-
 
 from pyinspect._colors import (
     mocassin,
@@ -14,6 +12,15 @@ from pyinspect._colors import (
     lightlilla,
 )
 
+from pathlib import Path
+
+# Make a base folder for pyinspect
+base_dir = Path.home() / ".pyinspect"
+base_dir.mkdir(exist_ok=True)
+
+error_cache = base_dir / "error_cache.txt"
+
+# Get other vars
 SO_url = "http://stackoverflow.com"
 console = Console(highlight=False)
 ls = f"bold underline {lightgray}"

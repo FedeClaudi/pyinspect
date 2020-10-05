@@ -7,7 +7,7 @@ from rich.theme import Theme
 
 from pyinspect.utils import timestamp
 from pyinspect._exceptions import inspect_traceback, get_locals
-from pyinspect.what_the_heck.what_the_heck import cache_error
+from pyinspect.answers import cache_error
 
 
 def print_exception(message=None, traceback=None, **kwargs):
