@@ -20,6 +20,7 @@ lilla = "#E46DEC"
 yellow = "#FFFACD"
 salmon = "#FA8072"
 mocassin = "#FFE4B5"
+white = "#ffffff"
 
 lightgray = "#b4b5b3"
 lightgreen = "#b7ed8e"

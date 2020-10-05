@@ -1,19 +1,23 @@
 import requests
 from bs4 import BeautifulSoup
 from rich.console import Console
+from rich.panel import Panel
+from rich.text import Text
 from googlesearch import search
 import click
 
+
 from pyinspect._colors import (
-    mocassin,
     salmon,
-    lilla,
     lightblue,
     lightgray,
     lightlilla,
+    white,
+    lightsalmon,
 )
 
 from pathlib import Path
+
 
 # Make a base folder for pyinspect
 base_dir = Path.home() / ".pyinspect"
@@ -24,7 +28,7 @@ error_cache = base_dir / "error_cache.txt"
 # Get other vars
 SO_url = "http://stackoverflow.com"
 console = Console(highlight=False)
-ls = f"bold underline {lightgray}"
+ls = f"bold {lightgray}"
 
 
 def cache_error(msg, doc):
@@ -108,35 +112,33 @@ def get_stackoverflow(query):
         )
         return
 
-    console.print(
-        f"[{mocassin}]Link to top [{lilla}]Stack Overflow[/{lilla}] question for your error: ",
-        f"       [{ls}]"
-        + _highlight_link(
-            query, SO_url + questionlink, website="stackoverflow.com"
-        )
-        + "/",
-        "",
-        f"[{mocassin}]To find more related answers on [{lilla}]Stack Overflow[/{lilla}], visit: ",
-        f"       [{ls}]"
-        + _highlight_link(query, search_url, website="stackoverflow.com")
-        + "/",
-        sep="\n",
+    out = Text.from_markup(
+        f"""
+[{white}]Link to top [{lightsalmon}]Stack Overflow[/{lightsalmon}] question for the error: 
+        [{ls}]{questionlink}[/{ls}]
+
+[{white}]To find more related answers on [{lightsalmon}]Stack Overflow[/{lightsalmon}], visit: 
+        [{ls}]"{search_url}[/{ls}]
+"""
     )
+
+    console.print(out)
 
 
 def get_google(query):
     """
         Prints links to the top hits on google given a search query (str).
     """
-    console.print(
-        f"[{mocassin}]Links to the top 3 results on [{lilla}]google.com[/{lilla}] for your error:"
-    )
+    out = f"""
+[{white}]Links to the top 3 results on [{lightsalmon}]google.com[/{lightsalmon}] for the error:
+"""
+
     for j in search("python " + query, tld="co.in", num=3, stop=3, pause=0.15):
-        console.print(
-            f"       [{ls}]"
-            + _highlight_link(query, j, website="stackoverflow.com"),
-            "",
-        )
+        out += f"""
+        [{ls}]{j}[/{ls}]
+        """
+
+    console.print(out)
 
 
 def get_answers():
@@ -147,16 +149,21 @@ def get_answers():
     """
 
     query, msg = load_cached()
-    console.print(
-        f"[bold {mocassin}]Searching online for solutions to your error:",
-        f"      [bold {salmon}]{query}",
-        f'          [{lightgray}] [bold {salmon}]{query.split(":")[0]}: [/bold {salmon}]{msg}',
-        "",
-        sep="\n",
+    out = f"""
+[bold {white}]Searching online for solutions to:
+
+        [bold {white}]>[/bold {white}] [bold {salmon}]{query}",
+        [bold {white}]>[/bold {white}]
+        [bold {white}]>[/bold {white}]    [{salmon}]{query.split(":")[0]}:[/{salmon}][{lightgray}] {msg}',
+        """
+
+    panel = Panel.fit(
+        Text.from_markup(out), padding=(1, 2), border_style=salmon, width=88
     )
 
+    console.print(panel)
+
     get_google(query)
-    console.print("")
     get_stackoverflow(query)
 
 
