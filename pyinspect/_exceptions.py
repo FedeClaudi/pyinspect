@@ -93,7 +93,10 @@ def _get_type_info(obj, all_locals=False):
 
     # Get some additional info
     if isinstance(obj, np.ndarray):
-        info = f"[#808080]Shape: {obj.shape} max: {obj.max()} min: {obj.min()} has nan: {np.any(np.isnan(obj))}"
+        try:
+            info = f"[#808080]Shape: {obj.shape} max: {obj.max()} min: {obj.min()} has nan: {np.any(np.isnan(obj))}"
+        except TypeError:  # array contains non-number values
+            info = f"[#808080]Shape: {obj.shape}, contains non-number objects"
     elif isinstance(obj, (list, tuple, str)):
         info = f"[#808080]Length: {len(obj)}"
     else:
