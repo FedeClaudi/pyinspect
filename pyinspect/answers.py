@@ -141,28 +141,38 @@ def get_google(query):
     console.print(out)
 
 
-def get_answers():
+def get_answers(hide_panel=False):
     """
         Looks for solution to the last error encountered.
         Prints the error message, it's meaning and links
         to possible answers on google and stack overflow.
+
+        :param hide_panel: bool, False. If true the panel with
+            the error message is hidden
     """
 
     query, msg = load_cached()
-    out = f"""
-[bold {white}]Searching online for solutions to:
 
-        [bold {white}]>[/bold {white}] [bold {salmon}]{query}",
-        [bold {white}]>[/bold {white}]
-        [bold {white}]>[/bold {white}]    [{salmon}]{query.split(":")[0]}:[/{salmon}][{lightgray}] {msg}',
-        """
+    # show a panel with a recap of the error message
+    if not hide_panel:
+        out = f"""
+    [bold {white}]Searching online for solutions to:
 
-    panel = Panel.fit(
-        Text.from_markup(out), padding=(1, 2), border_style=salmon, width=88
-    )
+            [bold {white}]>[/bold {white}] [bold {salmon}]{query}",
+            [bold {white}]>[/bold {white}]
+            [bold {white}]>[/bold {white}]    [{salmon}]{query.split(":")[0]}:[/{salmon}][{lightgray}] {msg}',
+            """
 
-    console.print(panel)
-
+        panel = Panel.fit(
+            Text.from_markup(out),
+            padding=(1, 2),
+            border_style=salmon,
+            width=88,
+        )
+        console.print(panel)
+    else:
+        console.print("\n")
+    # ask google and stack overflow
     get_google(query)
     get_stackoverflow(query)
 

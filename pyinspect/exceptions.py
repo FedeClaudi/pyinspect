@@ -3,11 +3,12 @@ import rich
 from rich.traceback import Traceback
 from rich import print
 from rich.console import Console
+from rich.prompt import Confirm
 from rich.theme import Theme
 
 from pyinspect.utils import timestamp
 from pyinspect._exceptions import inspect_traceback, get_locals
-from pyinspect.answers import cache_error
+from pyinspect.answers import cache_error, get_answers
 
 
 def print_exception(message=None, traceback=None, **kwargs):
@@ -35,7 +36,11 @@ def print_exception(message=None, traceback=None, **kwargs):
 
 
 def install_traceback(
-    keep_frames=2, hide_locals=False, all_locals=False, relevant_only=False
+    keep_frames=2,
+    hide_locals=False,
+    all_locals=False,
+    relevant_only=False,
+    enable_prompt=False,
 ):
     """
         Install an improved rich traceback handler (it includes a view of the local variables).
@@ -47,6 +52,8 @@ def install_traceback(
             Otherwise only variables are shown
         :param relevant_only: bool, False. If True only the variables in the error
             line are shown, otherwise all variables are shown. 
+        :param enable_prompt: bool, False. If true a prompt comes up after the tracebcak asking
+            if the user wants to google solutions to the error.
     """
     traceback_console = Console(
         file=sys.stderr, theme=Theme(rich.default_styles.DEFAULT_STYLES)
@@ -77,6 +84,13 @@ def install_traceback(
                 Traceback.from_exception(type_, value, traceback),
                 sep="\n" * 3,
             )
+
+        # Ask user if they want to google the error
+        if enable_prompt:
+            if Confirm().ask(
+                "\n[white]Do you want me to google solutions to this error?  "
+            ):
+                get_answers(hide_panel=True)
 
     old_excepthook = sys.excepthook
     sys.excepthook = excepthook
