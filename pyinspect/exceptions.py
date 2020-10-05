@@ -1,38 +1,12 @@
 import sys
 import rich
 from rich.traceback import Traceback
-from rich import print
 from rich.console import Console
 from rich.prompt import Confirm
 from rich.theme import Theme
 
-from pyinspect.utils import timestamp
-from pyinspect._exceptions import inspect_traceback, get_locals
+from pyinspect._exceptions import inspect_traceback
 from pyinspect.answers import cache_error, get_answers
-
-
-def print_exception(message=None, traceback=None, **kwargs):
-    """
-        It prints a nicely formatted traceback for an exception, 
-        including the variables in the local scope.
-        Example:
-        try:
-            do_something()
-        except Exception:
-            print_exception('oops')
-
-        :param message: str, optional. A message to add to the start of the traceback.
-                If none is passed a default message is used
-    """
-    # Get message
-    if message is None:
-        message = f":x:  [bold]Error -- [/bold][grey]{timestamp()} -- :x:\n"
-
-    # Get traceback if not passed
-    traceback = Traceback(**kwargs)
-
-    # print
-    print(message, traceback, "\n", get_locals(), sep="\n")
 
 
 def install_traceback(

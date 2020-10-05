@@ -1,6 +1,5 @@
 import pyinspect as pi
 import sys
-import pytest
 import numpy as np
 
 
@@ -58,19 +57,6 @@ def test_traceback_args():
 
     pi.install_traceback(keep_frames=5)
     raise_exception()
-
-
-def test_print_exception():
-    with pytest.raises(ZeroDivisionError):
-        # try:
-        1 / 0
-        # except Exception:
-        pi.print_exception()
-        pi.print_exception(message="Test")
-
-        exc_type, exc_value, traceback = sys.exc_info()
-        sys.excepthook(exc_type, exc_value, traceback)
-        pi.print_exception(traceback=traceback)
 
 
 def test_get_locals():
