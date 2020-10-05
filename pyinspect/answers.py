@@ -1,10 +1,14 @@
 import requests
 from bs4 import BeautifulSoup
 from rich.console import Console
-from rich.panel import Panel
 from rich.text import Text
+from rich.panel import Panel
+from rich.table import Table
+from rich.syntax import Syntax
+from rich.columns import Columns
 from googlesearch import search
 import click
+from pathlib import Path
 
 
 from pyinspect._colors import (
@@ -15,8 +19,7 @@ from pyinspect._colors import (
     white,
     lightsalmon,
 )
-
-from pathlib import Path
+from pyinspect._colors import Monokai
 
 
 # Make a base folder for pyinspect
@@ -95,7 +98,66 @@ def _get_link_so_top_answer(query):
     if link is None:
         return None, search_url
     else:
-        return link.get("href"), search_url
+        return SO_url + link.get("href"), search_url
+
+
+def _parse_so_top_answer(url):
+    """
+        Parses a link to a SO question
+        to return the formatted text answer
+    """
+    # get content
+    res = requests.get(url)
+    if not res.ok:
+        return None
+
+    # get question and answer
+    console.print("[white]Parsing SO answer...")
+    bs = BeautifulSoup(res.content, features="html.parser")
+
+    question = bs.find("div", attrs={"class": "question"})
+    answer = bs.find("div", attrs={"class": "answer accepted-answer"})
+
+    if answer is None or question is None:
+        return None
+
+    # Print as nicely formatted panels
+    panels = []
+    for name, obj, color in zip(
+        ["question", "answer"], [question, answer], [lightsalmon, lightblue]
+    ):
+        answer_body = obj.find("div", attrs={"class": "s-prose js-post-body"})
+
+        tb = Table(show_lines=None, show_edge=None, expand=False, box=None)
+        tb.add_column()
+
+        for child in answer_body.children:
+            if child.name is None:
+                continue
+
+            if "pre" in child.name:
+                tb.add_row(
+                    Syntax(child.text, lexer_name="python", theme=Monokai)
+                )
+                tb.add_row("")
+            elif "p" in child.name:
+                tb.add_row(Text.from_markup("[white]" + child.text))
+                tb.add_row("")
+
+        panels.append(Panel.fit(tb, title=name, border_style=color,))
+
+    if panels:
+        print(panels)
+        console.print(
+            Columns(
+                panels,
+                equal=True,
+                width=88,
+                title="Stack Overflow top question",
+            )
+        )
+    else:
+        console.print("[salmon]Failed to find answer on the SO page, sorry...")
 
 
 def get_stackoverflow(query):
@@ -112,13 +174,15 @@ def get_stackoverflow(query):
         )
         return
 
+    _parse_so_top_answer(questionlink)
+
     out = Text.from_markup(
         f"""
 [{white}]Link to top [{lightsalmon}]Stack Overflow[/{lightsalmon}] question for the error: 
         [{ls}]{questionlink}[/{ls}]
 
 [{white}]To find more related answers on [{lightsalmon}]Stack Overflow[/{lightsalmon}], visit: 
-        [{ls}]"{search_url}[/{ls}]
+        [{ls}]{search_url}[/{ls}]
 """
     )
 
@@ -129,16 +193,20 @@ def get_google(query):
     """
         Prints links to the top hits on google given a search query (str).
     """
-    out = f"""
-[{white}]Links to the top 3 results on [{lightsalmon}]google.com[/{lightsalmon}] for the error:
-"""
+    out = [
+        f"[{white}]Links to the top 3 results on [{lightsalmon}]google.com[/{lightsalmon}] for the error:\n"
+    ]
 
-    for j in search("python " + query, tld="co.in", num=3, stop=3, pause=0.15):
-        out += f"""
-        [{ls}]{j}[/{ls}]
-        """
+    for n, j in enumerate(
+        search("python " + query, tld="co.in", num=3, stop=3, pause=0.15)
+    ):
+        out.append(f"        [{ls}]{j}[/{ls}]\n")
 
-    console.print(out)
+        if n == 0:
+            best = j
+
+    console.print(*out, "\n")
+    return best
 
 
 def get_answers(hide_panel=False):
@@ -164,17 +232,18 @@ def get_answers(hide_panel=False):
             """
 
         panel = Panel.fit(
-            Text.from_markup(out),
-            padding=(1, 2),
-            border_style=salmon,
-            width=88,
+            Text.from_markup(out), padding=(1, 2), border_style=salmon,
         )
         console.print(panel)
     else:
         console.print("\n")
+
     # ask google and stack overflow
-    get_google(query)
-    get_stackoverflow(query)
+    best_answer = get_google(query)
+    # get_stackoverflow(query)
+
+    if "stackoverflow" in best_answer:
+        _parse_so_top_answer(best_answer)
 
 
 @click.command()

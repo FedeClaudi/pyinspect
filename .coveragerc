@@ -1,0 +1,6 @@
+[report]
+exclude_lines = 
+    def _get_link_so_top_answer
+    def _highlight_link
+    def get_stackoverflow
+    return None
