@@ -1,9 +1,12 @@
 from rich import print
 from rich.syntax import Syntax
+from rich import inspect as rinspect
+from rich.panel import Panel
+from rich.table import Table
 
-from inspect import isfunction, ismethod, isclass, getsource, isbuiltin
+from inspect import isfunction, ismethod, isclass, getsource, isbuiltin, stack
 
-from pyinspect._colors import mocassin, salmon, Monokai, DimMonokai
+from pyinspect._colors import mocassin, salmon, Monokai, DimMonokai, lightblue
 
 from pyinspect.utils import (
     _class_name,
@@ -13,28 +16,95 @@ from pyinspect.utils import (
     _module,
     _class,
 )
+from pyinspect._exceptions import (
+    render_scope,
+    local,
+    _get_type_info,
+    PANEL_WIDTH,
+    _get_type_color,
+)
 
 
-def show_locals():
-    # TODO
-    pass
+def what_locals(**kwargs):
+    """
+        Prints all variables, classes and modules in the local scope where `what` was called
+    """
+    # get relevant stack
+    _stack = stack()
+    local_stack = _stack[
+        -1
+    ].frame.f_locals  # vars in teh frame calling what hopefully
+
+    # get local variables in stack frame and the type of each variable
+    locs = {
+        k: local(
+            k,
+            l,
+            _get_type_info(l, all_locals=True)[0],
+            _get_type_info(l, all_locals=True)[1],
+            None,
+        )
+        for k, l in local_stack.items()
+    }
+    types = {
+        k: _get_type_info(l, all_locals=True)[2]
+        for k, l in local_stack.items()
+    }
+
+    # divide based on object type
+    classes = {k: locs[k] for k, t in types.items() if "type" in t}
+    variables = {
+        k: locs[k]
+        for k, t in types.items()
+        if "type" not in t and "module" not in t
+    }
+    modules = {k: locs[k] for k, t in types.items() if "module" in t}
+
+    # create a table to organize the results
+    table = Table(show_edge=False, show_lines=False, expand=False, box=None)
+    table.add_column()
+
+    # render each group of objects and add to table
+    for group, name in zip(
+        [variables, classes, modules], ["Variables", "Classes", "Modules"]
+    ):
+        cleaned_group = {
+            k: v for k, v in group.items() if not k.startswith("__")
+        }
+
+        # Get the correct color for the obj type
+        obj = list(cleaned_group.items())[0][1].obj
+        _type = _get_type_info(obj, all_locals=True)[2]
+        type_color = _get_type_color(_type)
+
+        # add to table
+        table.add_row(
+            f"[bold][{type_color}]{name}[/{type_color}][{mocassin}] in local frame."
+        )
+        table.add_row(render_scope(cleaned_group, just_table=True))
+
+    # print!
+    print(Panel.fit(table, width=PANEL_WIDTH + 10, border_style=lightblue))
 
 
-def show_var(var):
-    # TODO:
-    pass
+def what_var(var, methods=True, private=True, help=True, **kwargs):
+    """
+        Uses rich inspect to print an overview
+        of the object passed
+    """
+    rinspect(var, methods=methods, private=private, help=help, **kwargs)
 
 
-def show(var=None):
+def what(var=None, **kwargs):
     """
         Shows the details of a single variable or an
         overview of what's in the local scope.
     """
 
     if var is None:
-        show_locals()
+        what_locals()
     else:
-        show_var(var)
+        what_var(var)
 
 
 def showme(func):
