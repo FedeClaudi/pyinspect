@@ -8,6 +8,8 @@ def test_get_answers():
         # console seems to be throwing this while rendering
         pi.get_answers()
 
+        pi.get_answers(hide_panel=True)
+
 
 def test_cli():
     runner = CliRunner()

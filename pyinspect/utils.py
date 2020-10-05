@@ -5,6 +5,8 @@ import pkgutil
 import importlib
 from pathlib import Path
 import ast
+import requests
+
 
 import inspect
 from inspect import (
@@ -189,3 +191,38 @@ def get_end_of_doc_lineno(obj):
             ):
 
                 return node.body[0].value.lineno
+
+
+# ---------------------------------------------------------------------------- #
+#                                   WEB STUFF                                  #
+# ---------------------------------------------------------------------------- #
+
+
+def connected_to_internet(url="http://www.google.com/", timeout=5):
+    """
+        Check that there is an internet connection
+        :param url: url to use for testing (Default value = 'http://www.google.com/')
+        :param timeout:  timeout to wait for [in seconds] (Default value = 5)
+    """
+
+    try:
+        _ = requests.get(url, timeout=timeout)
+        return True
+    except requests.ConnectionError:
+        return False
+
+
+def warn_on_no_connection(func):
+    """
+        Decorator to avoid running a function when there's no internet
+    """
+
+    def inner(*args, **kwargs):
+        if not connected_to_internet():
+            print(
+                f"No internet connection found, can't proceed with the function: {_name(func)}."
+            )
+        else:
+            return func(*args, **kwargs)
+
+    return inner

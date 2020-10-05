@@ -20,7 +20,7 @@ from pyinspect._colors import (
     lightsalmon,
 )
 from pyinspect._colors import Monokai
-
+from pyinspect.utils import warn_on_no_connection
 
 # Make a base folder for pyinspect
 base_dir = Path.home() / ".pyinspect"
@@ -209,17 +209,24 @@ def get_google(query):
     return best
 
 
+@warn_on_no_connection
 def get_answers(hide_panel=False):
     """
-        Looks for solution to the last error encountered.
+        Looks for solution to the last error encountered (as cached).
         Prints the error message, it's meaning and links
         to possible answers on google and stack overflow.
+        It also parses the question and first answer from the top hit from
+        google if that's a link to a SO page.
 
         :param hide_panel: bool, False. If true the panel with
             the error message is hidden
     """
-
-    query, msg = load_cached()
+    try:
+        query, msg = load_cached()
+    except ValueError:
+        console.print(
+            f"[{lightsalmon}]Failed to load cached error, something went wrong...."
+        )
 
     # show a panel with a recap of the error message
     if not hide_panel:
