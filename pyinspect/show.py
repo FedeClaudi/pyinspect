@@ -72,6 +72,9 @@ def what_locals(**kwargs):
             k: v for k, v in group.items() if not k.startswith("__")
         }
 
+        if not len(cleaned_group.keys()):
+            continue  # nothing to show
+
         # Get the correct color for the obj type
         obj = list(cleaned_group.items())[0][1].obj
         _type = _get_type_info(obj, all_locals=True)[2]
