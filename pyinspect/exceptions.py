@@ -56,7 +56,7 @@ def install_traceback(
         type_, value, traceback,
     ):
         # cache error message
-        cache_error(f"{type_.__name__}: {value.args[0]}")
+        cache_error(f"{type_.__name__}: {value.args[0]}", value.__doc__)
 
         # show error traceback
         if not hide_locals:
