@@ -51,12 +51,15 @@ Allright, you've defined a bunch of variables and now can't remember the name or
     pi.what()  # print all local variables
 ```
 
-or to look at a single variable:
+<img src='media/what.png' width=800px></img>
+
+
+or to look at a single variable in detail with:
 ```
     pi.what(a)
 ```
 
-<!--! # TODO add image with this -->
+
 
 ## Can't remember a function's name...
 That's okay! You can use `pyinspect` to search for a function in a module or for a class' method!
@@ -76,7 +79,7 @@ pyinspect.search(np, name='sin')
 
 This results in a table with all the function's matching your search `name`:
 <!--! # TODO update -->
-<img src='media/find_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
+<img src='media/find_function.png' width=800px></img>
 
 >**note**: search also looks for functions in sub-modules of the module found.
 e.g.  `search(matplotlib...)` will look for methods across the entire `matplotlib` library!
@@ -109,7 +112,7 @@ pi.showme(pi.search)
 which yields:
 <!--! # TODO update -->
 
-<img src='media/print_function.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
+<img src='media/print_function.png' width=800px></img>
 
 
 ## Can't fix that bug...
@@ -137,7 +140,7 @@ a + c  # this will give an error
 and this is the traceback:
 <!-- ! #  TODO update -->
 
-<img src='media/traceback.png' style='border-radius:8px; box-shadow: 6px 6px 12px rgba(.2, .2, .2, .4)' width=800px></img>
+<img src='media/traceback.png' width=800px></img>
 
 > **note**: although we defined three variables (`a`, `b`, `c`) only two where in the line causing the error (`a + c`). `pyinspect` then highlights `a` and `c` in the traceback as this is what you need to know to fix your bug. If you want `pyinspect` to **only** show the variables in the error line pass `relevant_only=True` to `pi.install_traceback()`
 
