@@ -139,11 +139,14 @@ def textify(obj, maxlen=31):
     return Text(out)
 
 
-def timestamp():
+def timestamp(just_time=False):
     """
         Returns a formatted timestamp
     """
-    return time.strftime("%y%m%d_%H%M%S")
+    if not just_time:
+        return time.strftime("%y%m%d_%H%M%S")
+    else:
+        return time.strftime("%H:%M:%S")
 
 
 def clean_doc(doc, maxn=47):
