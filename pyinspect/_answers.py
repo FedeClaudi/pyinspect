@@ -1,19 +1,13 @@
-from rich.table import Table
-from rich.syntax import Syntax
 from rich.columns import Columns
-from rich.text import Text
-from rich.panel import Panel
-
 from bs4 import BeautifulSoup
 import requests
 
-from pyinspect.panels import warn
+from pyinspect.panels import warn, Report
 from pyinspect._rich import console
 from pyinspect._colors import (
     lightblue,
     lightlilla,
     lightsalmon,
-    Monokai,
     lightgray,
     mocassin,
 )
@@ -82,21 +76,20 @@ def _style_so_element(obj, name=None, color="white"):
     """
     body = obj.find("div", attrs={"class": "s-prose js-post-body"})
 
-    tb = Table(show_lines=None, show_edge=None, expand=False, box=None)
-    tb.add_column()
+    rep = Report(name, color=color, accent=color, dim=color)
 
     for child in body.children:
         if child.name is None:
             continue
 
         if "pre" in child.name:
-            tb.add_row(Syntax(child.text, lexer_name="python", theme=Monokai))
-            tb.add_row("")
+            rep.add(child.text, "code")
+            rep.add("")
         elif "p" in child.name:
-            tb.add_row(Text.from_markup("[bold]" + child.text))
-            tb.add_row("")
+            rep.add("[bold]" + child.text)
+            rep.add("")
 
-    return Panel.fit(tb, title=name, border_style=color,)
+    return rep
 
 
 def _parse_so_top_answer(url):
@@ -126,7 +119,7 @@ def _parse_so_top_answer(url):
     # Print as nicely formatted panels
     panels = []
     for name, obj, color in zip(
-        ["question", "answer"], [question, answer], [lightsalmon, lightblue]
+        ["Question", "Answer"], [question, answer], [lightsalmon, lightblue]
     ):
         panels.append(_style_so_element(obj, name, color))
 

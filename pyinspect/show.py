@@ -92,14 +92,6 @@ def what_locals(**kwargs):
     )
 
 
-def what_var(var, methods=True, private=True, help=True, **kwargs):
-    """
-        Uses rich inspect to print an overview
-        of the object passed
-    """
-    rinspect(var, methods=methods, private=private, help=help, **kwargs)
-
-
 def what(var=None, **kwargs):
     """
         Shows the details of a single variable or an
@@ -109,7 +101,7 @@ def what(var=None, **kwargs):
     if var is None:
         what_locals()
     else:
-        what_var(var)
+        rinspect(var, methods=True, private=True, help=False, **kwargs)
 
 
 def showme(func):
