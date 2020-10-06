@@ -123,7 +123,7 @@ Once again `pyinspect` has a labour-saving solution: an advanced `traceback` fun
 E.g.:
 ``` python
 # import pyinspect and install the traceback handler
-import pi
+import pyinspect as pi
 
 pi.install_traceback()  # use hide_locals=True to hide locals panels
 

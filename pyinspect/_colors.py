@@ -15,6 +15,18 @@ from pygments.token import (
     Literal,
 )
 
+red = "#fc330f"
+lightred = "#fcc0b6"
+dimred = "#a32f1a"
+
+orange = "#f59e42"
+lightorange = "#facb98"
+dimorange = "#b56510"
+
+green = "#27cf49"
+dimgreen = "#28803a"
+lightgreen2 = "#c9f7b0"
+
 gray = "#C0C0C0"
 lilla = "#E46DEC"
 yellow = "#FFFACD"
