@@ -1,11 +1,11 @@
-from googlesearch import search
+from googlesearch import search as gsearch
 import click
 from pathlib import Path
 from rich.text import Text
 from rich.panel import Panel
 
-from pyinspect._colors import salmon, lightgray, white, lightsalmon
-from pyinspect.utils import warn_on_no_connection
+from pyinspect._colors import salmon, lightgray, white, lightsalmon, lightblue
+from pyinspect.utils import warn_on_no_connection, _class_name
 from pyinspect.panels import warn
 from pyinspect._answers import (
     _get_link_so_top_answer,
@@ -72,24 +72,73 @@ def get_stackoverflow(query):
     console.print(out)
 
 
-def get_google(query):
+def get_google(
+    query, n_answers=3, best_so=False, mute=False, break_on_best=False
+):
     """
-        Prints links to the top hits on google given a search query (str).
+        Prints links to the top hits on google given a search query (str)
+        and returns a link to the top one.
+
+        :param query: str, search query
+        :param n_answers: int, number of max results to get
+        :param best_so: bool, False. If true the 'best' result must be from SO
+        :param mute: bool, False. If true the it doesn't print the results
+        :param break_on_best: bool, False. If true the it stops after finding the best answer
     """
     out = [
         f"[{white}]Links to the top 3 results on [{lightsalmon}]google.com[/{lightsalmon}] for the error:\n"
     ]
 
+    best = None
     for n, j in enumerate(
-        search("python " + query, tld="co.in", num=3, stop=3, pause=0.15)
+        gsearch(
+            "python " + query,
+            tld="co.in",
+            num=n_answers,
+            stop=n_answers,
+            pause=0.3,
+        )
     ):
         out.append(f"        [{ls}]{j}[/{ls}]\n")
 
-        if n == 0:
-            best = j
+        if best is None:
+            if not best_so or "stackoverflow" in j:
+                best = j
 
-    console.print(*out, "\n")
+                if break_on_best:
+                    break
+
+    if not mute:
+        console.print(*out, "\n")
     return best
+
+
+@warn_on_no_connection
+def ask(query):
+    """
+        Got a question? Google it!
+        Looks on google for a hit from stack overflow matching a search query
+        and prints it out nicely formatted
+    """
+    if not isinstance(query, str):
+        raise ValueError(
+            f"Search query must be a string, not {_class_name(query)}"
+        )
+    answer = get_google(
+        query, n_answers=10, best_so=True, mute=True, break_on_best=True
+    )
+
+    if answer is not None:
+        _parse_so_top_answer(answer)
+
+        console.print(
+            f"\nTo continue reading about this question, head to: [{lightblue}]{answer}\n"
+        )
+    else:
+        warn(
+            "Failed to get a SO",
+            f"Looked on google for {query}, but didn't find a Stack Overflow answer, sorry.",
+        )
 
 
 @warn_on_no_connection
@@ -140,3 +189,8 @@ def get_answers(hide_panel=False):
 @click.command()
 def cli_get_answers():
     get_answers()
+
+
+@click.command()
+def cli_ask():
+    ask("python concatenate strings")

@@ -28,6 +28,8 @@ setup(
     author="Federico Claudi",
     zip_safe=False,
     entry_points={
-        "console_scripts": ["why = pyinspect.answers: cli_get_answers"]
+        "console_scripts": [
+            "why = pyinspect.answers: cli_get_answers, ask = pyinspect.answers: cli_ask"
+        ]
     },
 )

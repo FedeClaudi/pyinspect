@@ -15,6 +15,7 @@ from pyinspect._colors import (
     lightsalmon,
     Monokai,
     lightgray,
+    mocassin,
 )
 
 SO_url = "http://stackoverflow.com"
@@ -69,10 +70,39 @@ def _get_link_so_top_answer(query):
         return SO_url + link.get("href"), search_url
 
 
+def _style_so_element(obj, name=None, color="white"):
+    """
+        # Given a bs4 obj with the html elements of a question or 
+        answer from a SO page, this function returns a nicely 
+        formatted Panel
+
+        :param obj: bs4 element
+        :param name: str, optional. Panel title
+        :param color: optional. Panel endge color
+    """
+    body = obj.find("div", attrs={"class": "s-prose js-post-body"})
+
+    tb = Table(show_lines=None, show_edge=None, expand=False, box=None)
+    tb.add_column()
+
+    for child in body.children:
+        if child.name is None:
+            continue
+
+        if "pre" in child.name:
+            tb.add_row(Syntax(child.text, lexer_name="python", theme=Monokai))
+            tb.add_row("")
+        elif "p" in child.name:
+            tb.add_row(Text.from_markup("[bold]" + child.text))
+            tb.add_row("")
+
+    return Panel.fit(tb, title=name, border_style=color,)
+
+
 def _parse_so_top_answer(url):
     """
         Parses a link to a SO question
-        to return the formatted text answer
+        to return the formatted text of the question and top answer
     """
     # get content
     res = requests.get(url)
@@ -98,34 +128,13 @@ def _parse_so_top_answer(url):
     for name, obj, color in zip(
         ["question", "answer"], [question, answer], [lightsalmon, lightblue]
     ):
-        answer_body = obj.find("div", attrs={"class": "s-prose js-post-body"})
-
-        tb = Table(show_lines=None, show_edge=None, expand=False, box=None)
-        tb.add_column()
-
-        for child in answer_body.children:
-            if child.name is None:
-                continue
-
-            if "pre" in child.name:
-                tb.add_row(
-                    Syntax(child.text, lexer_name="python", theme=Monokai)
-                )
-                tb.add_row("")
-            elif "p" in child.name:
-                tb.add_row(Text.from_markup("[white]" + child.text))
-                tb.add_row("")
-
-        panels.append(Panel.fit(tb, title=name, border_style=color,))
+        panels.append(_style_so_element(obj, name, color))
 
     if panels:
         console.print(
-            Columns(
-                panels,
-                equal=True,
-                width=88,
-                title="Stack Overflow top question",
-            )
+            f"[{mocassin}]\n\nAnswer to the top [i]Stack Overflow[/i] answer for your question.",
+            Columns(panels, equal=True, width=88,),
+            sep="\n",
         )
     else:
         warn(

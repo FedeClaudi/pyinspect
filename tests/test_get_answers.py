@@ -4,7 +4,7 @@ import pytest
 
 
 def test_get_answers():
-    with pytest.raises(ZeroDivisionError):
+    with pytest.raises((ZeroDivisionError, ValueError)):
         # console seems to be throwing this while rendering
         pi.get_answers()
 
