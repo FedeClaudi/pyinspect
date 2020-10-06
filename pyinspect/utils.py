@@ -223,7 +223,9 @@ def warn_on_no_connection(func):
     def inner(*args, **kwargs):
         if not connected_to_internet():
             print(
-                f"No internet connection found, can't proceed with the function: {_name(func)}."
+                "No internet connection found.",
+                f"Can't proceed with the function: {_name(func)}.",
+                sep="\n",
             )
         else:
             return func(*args, **kwargs)

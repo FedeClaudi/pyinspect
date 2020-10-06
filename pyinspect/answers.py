@@ -21,6 +21,7 @@ from pyinspect._colors import (
 )
 from pyinspect._colors import Monokai
 from pyinspect.utils import warn_on_no_connection
+from pyinspect.panels import warn
 
 # Make a base folder for pyinspect
 base_dir = Path.home() / ".pyinspect"
@@ -157,7 +158,10 @@ def _parse_so_top_answer(url):
             )
         )
     else:
-        console.print("[salmon]Failed to find answer on the SO page, sorry...")
+        warn(
+            "Failed to find answer on the SO page",
+            "While parsing the URL with the top SO answer, could not detect any answer. Nothing to report",
+        )
 
 
 def get_stackoverflow(query):
@@ -169,8 +173,9 @@ def get_stackoverflow(query):
     questionlink, search_url = _get_link_so_top_answer(query)
 
     if questionlink is None:
-        console.print(
-            f"[{salmon}]Failed to find anything on stack overflow, sorry."
+        warn(
+            "Failed to find anything on stack overflow, sorry.",
+            "While parsing the URL with the top SO answer, could not detect any answer. Nothing to report",
         )
         return
 
@@ -224,8 +229,9 @@ def get_answers(hide_panel=False):
     try:
         query, msg = load_cached()
     except ValueError:
-        console.print(
-            f"[{lightsalmon}]Failed to load cached error, something went wrong...."
+        warn(
+            "Failed to load cached error.",
+            "This could be because no error had been cached, or it could be a bug",
         )
 
     # show a panel with a recap of the error message
