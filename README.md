@@ -9,12 +9,13 @@
 
 [![Twitter Follow](https://img.shields.io/twitter/follow/Federico_claudi.svg?style=social)](https://twitter.com/Federico_claudi)
 
-
 # pyinspect - the python package for lazy programmers
-**Don't remember a function's name?** Use `pyinspect` to look for it.
-**Don't remember what a function does?** Use `pyinspect` to print its source code directly to your terminal
-**Can't figure out why you keep getting an error?** Use `pyinspect`'s fancy tracebacks to get more info
+**Don't remember a function's name?** Use `pyinspect` to look for it. \
+**Don't remember what a function does?** Use `pyinspect` to print its source code directly to your terminal. \
+**Can't figure out why you keep getting an error?** Use `pyinspect`'s fancy tracebacks to figure it out\
 **Still can't figure it out, but too lazy to google it?** Use `pyinspect` to print Stack Overflow's top answer for your error message directly to your terminal!
+
+... and a bunch of other features to make your life easier when coding.
 
 <!--! # TODO update GIF -->
 
@@ -23,14 +24,15 @@
 An example of how `pyinspect` can be used to find and inspect functions lazily.
 </p>
 
-# Table of Contents
+# Table of Contents 
 1. [Installing pyinspect](https://github.com/FedeClaudi/pyinspect#installing-pyinspect)
-2. [Can't remember a variable's name...]((https://github.com/FedeClaudi/pyinspect#finding-functions))
-3. [Can't remember a function's name...](https://github.com/FedeClaudi/pyinspect#finding-functions)
-4. [Can't remember what a function does](https://github.com/FedeClaudi/pyinspect#inspecting-functions)
-5. [Can't fix that bug...](https://github.com/FedeClaudi/pyinspect#tracebacks)
-6. [Still can't fix that bug!](https://github.com/FedeClaudi/pyinspect#tracebacks)
-
+2. [When you can't remember a variable's name...]((https://github.com/FedeClaudi/pyinspect#finding-functions))
+3. [When you can't remember a function's name...](https://github.com/FedeClaudi/pyinspect#finding-functions)
+4. [When you can't remember what a function does](https://github.com/FedeClaudi/pyinspect#inspecting-functions)
+5. [When you can't fix that bug...](https://github.com/FedeClaudi/pyinspect#tracebacks)
+6. [When you **still** can't fix that bug...](https://github.com/FedeClaudi/pyinspect#tracebacks)
+7. [When you got a question, ask Google](https://github.com/FedeClaudi/pyinspect#tracebacks)
+8. [When you... ](https://github.com/FedeClaudi/pyinspect#tracebacks)
 
 ## Installing pyinspect
 It's as simple as:
@@ -38,8 +40,8 @@ It's as simple as:
 pip install pyinspect
 ```
 
-## Can't remember a variable's name...
-Allright, you've defined a bunch of variables and now can't remember the name or content of the one you need. Fear not, you can use `pyinspect` to print all variables in your local scope:
+## When you can't remember a variable's name..
+Allright, you've defined a bunch of variables and now can't remember the name or content of the one you need. Fear not, becuse you can use `pyinspect` to print all variables in your local scope:
 
 ``` python
 
@@ -55,14 +57,14 @@ Allright, you've defined a bunch of variables and now can't remember the name or
 
 
 or to look at a single variable in detail with:
-```
+``` python
     pi.what(a)
 ```
 
 
 
-## Can't remember a function's name...
-That's okay! You can use `pyinspect` to search for a function in a module or for a class' method!
+## When you can't remember a function's name...
+That's okay! You can use `pyinspect` to search for a function by its name!
 E.g. to look for functions with `sin` in their name in `numpy`:
 
 ``` python
@@ -78,18 +80,20 @@ pyinspect.search(np, name='sin')
 
 
 This results in a table with all the function's matching your search `name`:
+
 <!--! # TODO update -->
 <img src='media/find_function.png' width=800px></img>
 
->**note**: search also looks for functions in sub-modules of the module found.
-e.g.  `search(matplotlib...)` will look for methods across the entire `matplotlib` library!
+>**note**: search also looks for functions in sub-modules of the module given.
+e.g.  `search(matplotlib, 'plot')` will look for methods across the entire `matplotlib` library!
 
 
-`pyinspect.find` can also be used to find class attributes. For example,
-say that you're looking for a method with `export` in the name in `rich.console.Console`:
+`pyinspect.find` can also be used to find class attrimethodbutes. For example to look for a method with `export` in the name in `rich.console.Console`:
+``` python
+pi.search(Console, 'export')
+```
 
-
->**note**: search also looks for methods matching your query 
+>**note**: `search` also looks for methods matching your query 
 among the parents of the `class` you passed. Use `include_parents=False`
 when calling `search` to restrict the search to just the class you've passed.
 Methods of the parent class are highlighted in a different color!
@@ -97,9 +101,9 @@ Methods of the parent class are highlighted in a different color!
 >**PRO TIP:** if you don't pass a search name to `pyinspect.search` (e.g. `pyinspect.find(Console)`), `pyinspect.search` will print **all** functions and methods.
 
 
-## Can't remember what a function does
+## When you can't remember what a function does
 Okay, you've found the function you need, that's great. *But how does it work?*
-You could open a the file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to terminal:
+You could open a the file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to your terminal with a simple command:
 
 ``` python 
 # import pyinspect
@@ -115,17 +119,17 @@ which yields:
 <img src='media/print_function.png' width=800px></img>
 
 
-## Can't fix that bug...
+## When you can't fix that bug...
 Sometimes you know what's causing an error, sometimes you don't. When you don't, it helps to know what the variables involved in the error are, possibly without having to go through the extra work of debugging stuff!
 
-Once again `pyinspect` has a labour-saving solution: an advanced `traceback` functionality that gives you all the information you need to fix your bug (hopefully!). Just install `pyinspect`'s traceback at the start of your script
+Once again `pyinspect` has a labour-saving solution: an advanced `traceback` functionality that gives you all the information you need to fix your bug (hopefully!). Just install `pyinspect`'s `traceback` at the start of your script: when get an error you'll get a helpful summary of what's going on with your code!
 
 E.g.:
 ``` python
 # import pyinspect and install the traceback handler
 import pyinspect as pi
 
-pi.install_traceback()  # use hide_locals=True to hide locals panels
+pi.install_traceback()  # use hide_locals=True to hide locals panels from your traceback
 
 # make some buggy code
 import numpy as np
@@ -150,12 +154,52 @@ and this is the traceback:
 * if you want more or less extensive tracebacks, you can use `keep_frames` to decide how many `frames` to shown in nested tracebacks (i.e when a function `a` calls a function `b` and the error comes up in `b`, do you want to see only the locals in `b` or in `a` *and* `b`?)
 
 
-## Still can't fix that bug!
+## When you **still** can't fix that bug...
 Time to do what any real programmer does in this situation... google it / copy-paste an answer from Stack Overflow. But that involves pulling up your browser, opening a new tab, typing stuf... too much work!
 
-When an error comes up, `pyinspect` gives you the opportunity to automate this work away: just type `s` in your terminal and `pyinspect` will give you links to google's top 3 solutions and print out the answer to Stack Overflow's top question related to your error!
+When an error comes up, `pyinspect` gives you the opportunity to automate this work away by doing the googling for you. 
+You can do that in two ways:
+
+1. passing `enable_prompt=True` to `install_traceback`: after the error traceback a prompt will come up asking if you want to look for solutions online, type `y`. 
+2. In a terminal window use the `why` command and `pyinspect` will automatically lookup solutions to the last error you've had.
+
+Either way, you get 3 things:
+* A description of your error
+* Links to the top 3 results on Google
+* A neat render of a Stack Overflow question and answer related to your error. 
+
+Check it out:
+
 
 <!-- ! #  TODO add image -->
+
+## When you got a question, ask Google
+Ever found yourself googling the same basic command over and over because you keep forgetting what the syntax is?
+If you do (and I know you do), or if you have any other question, now you can look for answers directly in python with `pynspect.ask`.
+Using it is fairly simple:
+
+```python
+pi.ask("python Concatenate two lists?")
+```
+
+<img src='media/ask.png' width=800px></img>
+
+## When you... 
+`pyinspect` as still a few useful features you might find yourself using from time to time. One of our favourites is `panels`: a simple why to print neat messages to terminal, for when you need to communicate with your users.
+
+```python
+
+import pyinspect as pi
+
+
+pi.warn('This is a warning', 'Ooops, something might be wrong!')
+
+
+pi.ok('You got this!', 'Panels are simple, but nice. Checkout `pyinspect.panels` to see what other kind of panels there are!')
+```
+
+<!-- ! #  TODO make -->
+
 
 
 ## Contributing

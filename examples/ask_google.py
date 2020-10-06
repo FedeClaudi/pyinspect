@@ -6,4 +6,4 @@
 
 import pyinspect as pi
 
-pi.ask("python how to concatenate two lists?")
+pi.ask("python Concatenate two lists?")
