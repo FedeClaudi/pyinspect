@@ -117,10 +117,14 @@ def _parse_so_top_answer(url):
     bs = BeautifulSoup(res.content, features="html.parser")
 
     question = bs.find("div", attrs={"class": "question"})
-    answer = bs.find("div", attrs={"class": "answer accepted-answer"})
+    answer = bs.find("div", attrs={"class": "answer"})
 
     if answer is None or question is None:
-        return None
+        warn(
+            "Failed to parse SO answer",
+            f"We tried to parse the SO question but failed...",
+        )
+        return
 
     # Print as nicely formatted panels
     panels = []
