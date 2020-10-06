@@ -192,5 +192,6 @@ def cli_get_answers():
 
 
 @click.command()
-def cli_ask():
-    ask("python concatenate strings")
+@click.argument("query")
+def cli_ask(query):
+    ask(query)

@@ -6,7 +6,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 requirements = [
-    "rich",
+    "rich>=8.0.0",
     "numpy",
     "google",
     "bs4",
@@ -29,7 +29,8 @@ setup(
     zip_safe=False,
     entry_points={
         "console_scripts": [
-            "why = pyinspect.answers: cli_get_answers, ask = pyinspect.answers: cli_ask"
+            "why = pyinspect.answers: cli_get_answers",
+            "ask = pyinspect.answers: cli_ask",
         ]
     },
 )
