@@ -25,6 +25,8 @@ import functools
 from io import StringIO
 
 
+from pyinspect._rich import console
+
 # ---------------------------------------------------------------------------- #
 #                                    OBJECTS                                   #
 # ---------------------------------------------------------------------------- #
@@ -128,8 +130,8 @@ def read_single_line(fpath, lineno):
 def textify(obj, maxlen=31):
     pretty = PrettyPrinter(compact=True)
     buf = StringIO()
-    console = Console(file=buf, force_jupyter=False)
-    console.print(pretty.pformat(obj))
+    _console = Console(file=buf, force_jupyter=False)
+    _console.print(pretty.pformat(obj))
 
     out = buf.getvalue()
 
@@ -222,7 +224,7 @@ def warn_on_no_connection(func):
 
     def inner(*args, **kwargs):
         if not connected_to_internet():
-            print(
+            console.print(
                 "No internet connection found.",
                 f"Can't proceed with the function: {_name(func)}.",
                 sep="\n",

@@ -1,9 +1,10 @@
 from inspect import isclass, getsourcelines, isfunction, signature
 import inspect
 
-from rich import box, print
+from rich import box
 from rich.table import Table
 
+from pyinspect._rich import console
 from pyinspect._colors import lightgray, lightgreen, yellow, salmon, mocassin
 from pyinspect.utils import (
     clean_doc,
@@ -61,7 +62,7 @@ def print_methods_table(found, class_obj, name):
             count += 1
 
     st = f"bold black on {mocassin}"
-    print(
+    console.print(
         f"\n[{mocassin}]Looking for methods of [{st}] {_name(class_obj)} ({_module(class_obj)}) [/{st}] with query name: [{st}] {name} [/{st}]:",
         table,
     )
@@ -106,7 +107,7 @@ def print_funcs_table(found, module, name):
             count += 1
 
     st = f"black bold on {mocassin}"
-    print(
+    console.print(
         f"[{mocassin}]Looking for functions of [{st}] {_name(module)} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
         table,
     )

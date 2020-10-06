@@ -1,4 +1,3 @@
-from rich import print
 from rich.syntax import Syntax
 from rich import inspect as rinspect
 from rich.panel import Panel
@@ -23,6 +22,7 @@ from pyinspect._exceptions import (
     PANEL_WIDTH,
     _get_type_color,
 )
+from pyinspect._rich import console
 
 
 def what_locals(**kwargs):
@@ -87,7 +87,9 @@ def what_locals(**kwargs):
         table.add_row(render_scope(cleaned_group, just_table=True))
 
     # print!
-    print(Panel.fit(table, width=PANEL_WIDTH + 10, border_style=lightblue))
+    console.print(
+        Panel.fit(table, width=PANEL_WIDTH + 10, border_style=lightblue)
+    )
 
 
 def what_var(var, methods=True, private=True, help=True, **kwargs):
@@ -117,7 +119,7 @@ def showme(func):
         :param func: pointer to a python get_class_that_defined_method
     """
     if isbuiltin(func):
-        print(
+        console.print(
             f'[black on {mocassin}]`showme` currently does not work with builtin functions like "{_name(func)}", sorry. '
         )
         return False
@@ -129,13 +131,13 @@ def showme(func):
             if not isclass(func):
                 raise TypeError
         except (AttributeError, TypeError):
-            print(
+            console.print(
                 f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
             )
             return False
 
         if isclass(func):
-            print(
+            console.print(
                 f"[{mocassin}]The object passed is a class instance, printing source code for the class definition"
             )
 
@@ -178,7 +180,7 @@ def showme(func):
             f"\n[bold]Function [yellow]{_name(func)}[/yellow] from [blue]{_module(func)}[/blue]\n"
         )
 
-    print(
+    console.print(
         *output,
         Syntax(
             getsource(func),

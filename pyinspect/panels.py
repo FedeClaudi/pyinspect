@@ -1,4 +1,3 @@
-from rich import print
 from rich.table import Table
 from rich.panel import Panel
 
@@ -17,6 +16,7 @@ from pyinspect._colors import (
     dimred,
     lightred,
 )
+from pyinspect._rich import console
 
 
 class BasePanel:
@@ -50,7 +50,7 @@ class BasePanel:
         if msg is not None:
             tb.add_row(f"[{self.color}]{msg}")
 
-        print(
+        console.print(
             Panel.fit(
                 tb, width=50, border_style=self.dim, padding=(0, 2, 1, 2)
             ),

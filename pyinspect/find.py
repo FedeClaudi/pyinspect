@@ -1,10 +1,10 @@
 import inspect
 from inspect import isfunction, isclass
-from rich import print
 
 
 from pyinspect.utils import get_submodules
 from pyinspect._find import print_funcs_table, print_methods_table
+from pyinspect._rich import console
 
 
 def search_class_method(
@@ -51,7 +51,7 @@ def search_class_method(
     found = {k: v for k, v in found.items() if v.keys()}
 
     if not found.keys():
-        print(
+        console.print(
             f"[magenta]No methods found in class {class_obj} with query: {name}"
         )
         return None
@@ -103,7 +103,7 @@ def search_module_function(
     found = {k: v for k, v in found.items() if v}
 
     if not len(found.keys()):
-        print(
+        console.print(
             f"[magenta]No functions found in module {module} with query: {name}"
         )
         return None
