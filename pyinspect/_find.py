@@ -17,16 +17,18 @@ from pyinspect.utils import (
 
 def print_methods_table(found, class_obj, name):
     """
-        Prints a table with the methods found by search_class_method
+    Prints a table with the methods found by search_class_method
 
-        :param found: dictionary with found functions
-        :param class_obj: class obj. Where the methods where searched in
-        :param name: str, None. Query string
+    :param found: dictionary with found functions
+    :param class_obj: class obj. Where the methods where searched in
+    :param name: str, None. Query string
     """
 
     # make rich table
     table = Table(
-        show_header=True, header_style="bold magenta", box=box.SIMPLE,
+        show_header=True,
+        header_style="bold magenta",
+        box=box.SIMPLE,
     )
     table.add_column("#", style="dim", width=3, justify="center")
     table.add_column("name", style="bold " + lightgreen)
@@ -57,7 +59,12 @@ def print_methods_table(found, class_obj, name):
             module = f"[white]{_module(v)} [dim](line: {lineno})"
 
             table.add_row(
-                str(count), method_name, cs, "", module, sig,
+                str(count),
+                method_name,
+                cs,
+                "",
+                module,
+                sig,
             )
             count += 1
 
@@ -70,14 +77,16 @@ def print_methods_table(found, class_obj, name):
 
 def print_funcs_table(found, module, name):
     """
-        Prints a table with the functions found by search_module_function
+    Prints a table with the functions found by search_module_function
 
-        :param found: dictionary with found functions
-        :param module: module obj. Where the functions where searched in
-        :param name: str, None. Query string
+    :param found: dictionary with found functions
+    :param module: module obj. Where the functions where searched in
+    :param name: str, None. Query string
     """
     table = Table(
-        show_header=True, header_style="bold magenta", box=box.SIMPLE,
+        show_header=True,
+        header_style="bold magenta",
+        box=box.SIMPLE,
     )
     table.add_column("#", style="dim", width=3, justify="center")
     table.add_column("name", style="bold " + lightgreen)

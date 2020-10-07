@@ -27,7 +27,7 @@ __version__ = "0.0.7rc"
 
 def pi():
     """
-        Prints a Report with an overview of `pyinspect`.
+    Prints a Report with an overview of `pyinspect`.
 
     """
     rep = Report(f"Pynspect", dim=orange, accent=orange)

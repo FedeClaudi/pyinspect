@@ -18,10 +18,10 @@ ls = f"bold {lightgray}"  # link style
 
 def _highlight_link(query, url, website=""):
     """
-        Highlights the part of a link corresponding to a search query
+    Highlights the part of a link corresponding to a search query
 
-        :param query: str, search query
-        :param url: str, link.
+    :param query: str, search query
+    :param url: str, link.
     """
     if query not in url:
         q = query.lower()
@@ -40,10 +40,10 @@ def _highlight_link(query, url, website=""):
 
 def _get_link_so_top_answer(query):
     """
-        Searches SO for answers given a query and sorts by relevance.
-        returns the link to the best answer and to the list of all answers.
+    Searches SO for answers given a query and sorts by relevance.
+    returns the link to the best answer and to the list of all answers.
 
-        :param query: str, search query
+    :param query: str, search query
     """
     # get search string
     params = f"q=python {query}&sort=relevance"
@@ -66,13 +66,13 @@ def _get_link_so_top_answer(query):
 
 def _style_so_element(obj, name=None, color="white"):
     """
-        # Given a bs4 obj with the html elements of a question or 
-        answer from a SO page, this function returns a nicely 
-        formatted Panel
+    # Given a bs4 obj with the html elements of a question or
+    answer from a SO page, this function returns a nicely
+    formatted Panel
 
-        :param obj: bs4 element
-        :param name: str, optional. Panel title
-        :param color: optional. Panel endge color
+    :param obj: bs4 element
+    :param name: str, optional. Panel title
+    :param color: optional. Panel endge color
     """
     body = obj.find("div", attrs={"class": "s-prose js-post-body"})
 
@@ -94,8 +94,8 @@ def _style_so_element(obj, name=None, color="white"):
 
 def _parse_so_top_answer(url):
     """
-        Parses a link to a SO question
-        to return the formatted text of the question and top answer
+    Parses a link to a SO question
+    to return the formatted text of the question and top answer
     """
     # get content
     res = requests.get(url)
@@ -126,7 +126,11 @@ def _parse_so_top_answer(url):
     if panels:
         console.print(
             f"[{mocassin}]\n\nAnswer to the top [i]Stack Overflow[/i] answer for your question.",
-            Columns(panels, equal=True, width=88,),
+            Columns(
+                panels,
+                equal=True,
+                width=88,
+            ),
             sep="\n",
         )
     else:

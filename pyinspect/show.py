@@ -27,7 +27,7 @@ from pyinspect._rich import console
 
 def what_locals(**kwargs):
     """
-        Prints all variables, classes and modules in the local scope where `what` was called
+    Prints all variables, classes and modules in the local scope where `what` was called
     """
     # get relevant stack
     _stack = stack()
@@ -94,8 +94,8 @@ def what_locals(**kwargs):
 
 def what(var=None, **kwargs):
     """
-        Shows the details of a single variable or an
-        overview of what's in the local scope.
+    Shows the details of a single variable or an
+    overview of what's in the local scope.
     """
 
     if var is None:
@@ -106,9 +106,9 @@ def what(var=None, **kwargs):
 
 def showme(func):
     """
-        Given a pointer to a python function, it prints the code of the function. 
+    Given a pointer to a python function, it prints the code of the function.
 
-        :param func: pointer to a python get_class_that_defined_method
+    :param func: pointer to a python get_class_that_defined_method
     """
     if isbuiltin(func):
         console.print(

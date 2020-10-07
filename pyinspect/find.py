@@ -11,15 +11,15 @@ def search_class_method(
     class_obj, name="", print_table=True, include_parents=True, **kwargs
 ):
     """
-        Given a python class, it finds allclass methods whose name includes
-        the given search string (name)
+    Given a python class, it finds allclass methods whose name includes
+    the given search string (name)
 
-        :param class_obj: a python Class. Should not be a class instance, but a point to the class object
-        :param name: str, optional. Returns only methods which have this string in the name. If not is given returns all methods
-        :param print_table: bool, optional. If True it prints a table with all the found methods
-        :param bool: if true it looks for methods in parents of the class_obj as well
+    :param class_obj: a python Class. Should not be a class instance, but a point to the class object
+    :param name: str, optional. Returns only methods which have this string in the name. If not is given returns all methods
+    :param print_table: bool, optional. If True it prints a table with all the found methods
+    :param bool: if true it looks for methods in parents of the class_obj as well
 
-        :returns: dict with all the methods found
+    :returns: dict with all the methods found
     """
     if not isclass(class_obj):
         raise ValueError(
@@ -64,14 +64,14 @@ def search_module_function(
     module, name="", print_table=True, include_class=True, **kwargs
 ):
     """
-        Given a module (e.g. matplotlib.pyplot) finds all the functions
-        in it whose name includes the given search string.
+    Given a module (e.g. matplotlib.pyplot) finds all the functions
+    in it whose name includes the given search string.
 
-        :param module: python module (e.g. numpy)
-        :param name: str, optional. Search string, if none is passed it returns all functions
-        :param print_table: bool, optional.  If True it prints a table with all the found functions
+    :param module: python module (e.g. numpy)
+    :param name: str, optional. Search string, if none is passed it returns all functions
+    :param print_table: bool, optional.  If True it prints a table with all the found functions
 
-        :returns: dict with all the functions found 
+    :returns: dict with all the functions found
     """
 
     def same_module(obj, module):
@@ -115,12 +115,12 @@ def search_module_function(
 
 def search(obj, name="", print_table=True, **kwargs):
     """
-        General find function, handles both
-        find in classes and find in module
+    General find function, handles both
+    find in classes and find in module
 
-        :param obj: object, either a python class or module
-        :param name: str, optional. Search query.
-        :param print_table: bool, optional. If True it prints a table with all the found items
+    :param obj: object, either a python class or module
+    :param name: str, optional. Search query.
+    :param print_table: bool, optional. If True it prints a table with all the found items
     """
     if inspect.isclass(obj):
         return search_class_method(

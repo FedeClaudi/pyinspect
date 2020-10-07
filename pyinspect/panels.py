@@ -25,7 +25,7 @@ from pyinspect._rich import console
 
 class BasePanel:
     """
-        A simple panel to send messages
+    A simple panel to send messages
     """
 
     color = verylightgray
@@ -36,8 +36,8 @@ class BasePanel:
 
     def __init__(self, title, msg=None):
         """
-            :param title: str, panel title.
-            :param msg: str, panel message.
+        :param title: str, panel title.
+        :param msg: str, panel message.
         """
         self.title = title
         self.msg = msg
@@ -73,16 +73,16 @@ class BasePanel:
 
     def print(self):
         """
-            It prints the panel!
+        It prints the panel!
         """
         console.print(self)
 
 
 class Report(BasePanel):
     """
-        Report combines rich's tables and panels to
-        create a detailed styled report to which
-        various kinds of data can be added programmatically.
+    Report combines rich's tables and panels to
+    create a detailed styled report to which
+    various kinds of data can be added programmatically.
     """
 
     _color = verylightgray
@@ -145,7 +145,7 @@ class Report(BasePanel):
 
     def __rich_console__(self, *args):
         """
-            To make it work with rich's print
+        To make it work with rich's print
         """
         yield Panel.fit(
             self.tb,

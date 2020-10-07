@@ -25,9 +25,9 @@ error_cache = base_dir / "error_cache.txt"
 
 def cache_error(msg, doc):
     """
-        Saves a string with an error message to file
-        so that it can later be used to google the
-        error
+    Saves a string with an error message to file
+    so that it can later be used to google the
+    error
     """
     with open(str(error_cache), "w") as f:
         f.writelines(msg + "-x-" + doc)
@@ -35,7 +35,7 @@ def cache_error(msg, doc):
 
 def load_cached():
     """
-        Loads a cached error message
+    Loads a cached error message
     """
     with open(str(error_cache), "r") as f:
         txt = f.read()
@@ -43,9 +43,9 @@ def load_cached():
 
 
 def get_stackoverflow(query):
-    """ 
-        Prints the results of interrogating SO
-        with a search query (str).
+    """
+    Prints the results of interrogating SO
+    with a search query (str).
     """
     # get link to top question
     questionlink, search_url = _get_link_so_top_answer(query)
@@ -76,14 +76,14 @@ def get_google(
     query, n_answers=3, best_so=False, mute=False, break_on_best=False
 ):
     """
-        Prints links to the top hits on google given a search query (str)
-        and returns a link to the top one.
+    Prints links to the top hits on google given a search query (str)
+    and returns a link to the top one.
 
-        :param query: str, search query
-        :param n_answers: int, number of max results to get
-        :param best_so: bool, False. If true the 'best' result must be from SO
-        :param mute: bool, False. If true the it doesn't print the results
-        :param break_on_best: bool, False. If true the it stops after finding the best answer
+    :param query: str, search query
+    :param n_answers: int, number of max results to get
+    :param best_so: bool, False. If true the 'best' result must be from SO
+    :param mute: bool, False. If true the it doesn't print the results
+    :param break_on_best: bool, False. If true the it stops after finding the best answer
     """
     out = [
         f"[{white}]Links to the top 3 results on [{lightsalmon}]google.com[/{lightsalmon}] for the error:\n"
@@ -116,9 +116,9 @@ def get_google(
 @warn_on_no_connection
 def ask(query):
     """
-        Got a question? Google it!
-        Looks on google for a hit from stack overflow matching a search query
-        and prints it out nicely formatted
+    Got a question? Google it!
+    Looks on google for a hit from stack overflow matching a search query
+    and prints it out nicely formatted
     """
     if not isinstance(query, str):
         raise ValueError(
@@ -144,14 +144,14 @@ def ask(query):
 @warn_on_no_connection
 def get_answers(hide_panel=False):
     """
-        Looks for solution to the last error encountered (as cached).
-        Prints the error message, it's meaning and links
-        to possible answers on google and stack overflow.
-        It also parses the question and first answer from the top hit from
-        google if that's a link to a SO page.
+    Looks for solution to the last error encountered (as cached).
+    Prints the error message, it's meaning and links
+    to possible answers on google and stack overflow.
+    It also parses the question and first answer from the top hit from
+    google if that's a link to a SO page.
 
-        :param hide_panel: bool, False. If true the panel with
-            the error message is hidden
+    :param hide_panel: bool, False. If true the panel with
+        the error message is hidden
     """
     try:
         query, msg = load_cached()
@@ -172,7 +172,9 @@ def get_answers(hide_panel=False):
             """
 
         panel = Panel.fit(
-            Text.from_markup(out), padding=(1, 2), border_style=salmon,
+            Text.from_markup(out),
+            padding=(1, 2),
+            border_style=salmon,
         )
         console.print(panel)
     else:

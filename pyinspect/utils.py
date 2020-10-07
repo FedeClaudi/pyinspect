@@ -50,7 +50,7 @@ def _module(obj):
 
 def get_submodules(module):
     """
-        Attempts to find all submodules of a given module object
+    Attempts to find all submodules of a given module object
     """
     try:
         path = module.__path__
@@ -59,7 +59,9 @@ def get_submodules(module):
 
     modules = {_name(module): module}
     for importer, modname, ispkg in pkgutil.walk_packages(
-        path=path, prefix=_name(module) + ".", onerror=lambda x: None,
+        path=path,
+        prefix=_name(module) + ".",
+        onerror=lambda x: None,
     ):
         try:
             modules[modname] = importlib.import_module(modname)
@@ -70,11 +72,11 @@ def get_submodules(module):
 
 def get_class_that_defined_method(meth):
     """
-        Given a reference to some classes' method, 
-        this function returns the class the method
-        belongs to.
+    Given a reference to some classes' method,
+    this function returns the class the method
+    belongs to.
 
-        :param meth: method object.
+    :param meth: method object.
     """
     if isinstance(meth, functools.partial):
         return get_class_that_defined_method(meth.func)
@@ -109,7 +111,7 @@ def get_class_that_defined_method(meth):
 # ---------------------------------------------------------------------------- #
 def read_single_line(fpath, lineno):
     """
-        Read a single line from a given path
+    Read a single line from a given path
     """
     if not isinstance(lineno, int):
         raise ValueError(
@@ -143,7 +145,7 @@ def textify(obj, maxlen=31):
 
 def timestamp(just_time=False):
     """
-        Returns a formatted timestamp
+    Returns a formatted timestamp
     """
     if not just_time:
         return time.strftime("%y%m%d_%H%M%S")
@@ -153,12 +155,12 @@ def timestamp(just_time=False):
 
 def clean_doc(doc, maxn=47):
     """
-        Cleans a docstring and shortens it if necessary + appends and ellips
+    Cleans a docstring and shortens it if necessary + appends and ellips
 
-        :param doc: str, string with docstring
-        :param maxn: int, docstrings longer than maxn will be truncated
+    :param doc: str, string with docstring
+    :param maxn: int, docstrings longer than maxn will be truncated
 
-        :returns: str
+    :returns: str
     """
     if doc is None:
         return ""
@@ -172,8 +174,8 @@ def clean_doc(doc, maxn=47):
 
 def get_end_of_doc_lineno(obj):
     """
-        Given a class or a function it returns the number
-        of the line at which the docstring ends
+    Given a class or a function it returns the number
+    of the line at which the docstring ends
     """
     # check argument
     if not isclass(obj) and not (isfunction(obj) or isbuiltin(obj)):
@@ -205,9 +207,9 @@ def get_end_of_doc_lineno(obj):
 
 def connected_to_internet(url="http://www.google.com/", timeout=5):
     """
-        Check that there is an internet connection
-        :param url: url to use for testing (Default value = 'http://www.google.com/')
-        :param timeout:  timeout to wait for [in seconds] (Default value = 5)
+    Check that there is an internet connection
+    :param url: url to use for testing (Default value = 'http://www.google.com/')
+    :param timeout:  timeout to wait for [in seconds] (Default value = 5)
     """
 
     try:
@@ -219,7 +221,7 @@ def connected_to_internet(url="http://www.google.com/", timeout=5):
 
 def warn_on_no_connection(func):
     """
-        Decorator to avoid running a function when there's no internet
+    Decorator to avoid running a function when there's no internet
     """
 
     def inner(*args, **kwargs):

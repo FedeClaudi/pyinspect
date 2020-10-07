@@ -34,8 +34,8 @@ local = namedtuple("local", "key, obj, type, info, eline")
 
 def _print_object(obj):
     """
-        Returns a coincise and pretty print
-        of any object
+    Returns a coincise and pretty print
+    of any object
     """
     highlighter = ReprHighlighter()
 
@@ -112,17 +112,17 @@ def render_scope(
     scope, *, synt=None, title=None, relevant_only=False, just_table=False
 ):
     """
-        Creates a rich panel display a 'frame' in a traceback
-        stack. It include a clickable link to the source filepath,
-        an overview of the line causing the error and a table with
-        local variables.
+    Creates a rich panel display a 'frame' in a traceback
+    stack. It include a clickable link to the source filepath,
+    an overview of the line causing the error and a table with
+    local variables.
 
-        :param scope: dict with local variables
-        :param synt: Syntax object with a line error. optional
-        :param title: str, title of the panel showing the locals
-        :param relevant_only: bool, False. If true only the variables in the error line are passed
-        :param just_table: bool, False. If true just a table with local variabels is returned instead
-                of the complete panel
+    :param scope: dict with local variables
+    :param synt: Syntax object with a line error. optional
+    :param title: str, title of the panel showing the locals
+    :param relevant_only: bool, False. If true only the variables in the error line are passed
+    :param just_table: bool, False. If true just a table with local variabels is returned instead
+            of the complete panel
     """
 
     def sort_items(item):
@@ -247,14 +247,14 @@ def inspect_traceback(
     tb, keep_frames=2, all_locals=False, relevant_only=False
 ):
     """
-        Get the whole traceback stack with 
-        locals at each frame and expand the local
-        with additional info that may be useful.
+    Get the whole traceback stack with
+    locals at each frame and expand the local
+    with additional info that may be useful.
 
-        :param tb: traceback object
-        :param keep_frames: int. Keep only the last N frames for traceback
-        :all_locals: bool, False. If True all locals (e.g. including imported modules) are shown.
-            Otherwise only variables are shown
+    :param tb: traceback object
+    :param keep_frames: int. Keep only the last N frames for traceback
+    :all_locals: bool, False. If True all locals (e.g. including imported modules) are shown.
+        Otherwise only variables are shown
     """
     # Get the whole traceback stack
     while True:
@@ -305,7 +305,13 @@ def inspect_traceback(
                 continue
 
             # Store all info
-            locs[k] = local(k, v, _type, info, eline,)
+            locs[k] = local(
+                k,
+                v,
+                _type,
+                info,
+                eline,
+            )
 
         # make panel
         title = f"[i #D3D3D3]file: [bold underline]{text}[/bold underline] line {f.f_lineno}"
@@ -319,7 +325,7 @@ def inspect_traceback(
 
 def get_locals():
     """
-        Returns a rich rendering of the variables in the local scope
+    Returns a rich rendering of the variables in the local scope
     """
     caller = inspect.stack()[1]
 
