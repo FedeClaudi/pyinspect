@@ -16,18 +16,18 @@ repos:
 
 
 
-# - repo: local
-#   hooks:
-#     - id: pytest
-#       name: pytest
-#       entry: bash -c 'pytest'
-#       language: system
-#       types: [python]
-#       pass_filenames: false
-#     - id: make_coverage_badge
-#       name: make_coverage_badge
-#       entry: bash -c 'rm coverage.svg;coverage-badge -o coverage.svg'
-#       language: system
-#       types: [python]
-#       pass_filenames: false
+- repo: local
+  hooks:
+    - id: pytest
+      name: pytest
+      entry: bash -c 'pytest'
+      language: system
+      types: [python]
+      pass_filenames: false
+    - id: make_coverage_badge
+      name: make_coverage_badge
+      entry: bash -c 'rm coverage.svg;coverage-badge -o coverage.svg'
+      language: system
+      types: [python]
+      pass_filenames: false
 
