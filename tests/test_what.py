@@ -2,6 +2,10 @@ import pyinspect as pi
 import numpy as np
 
 
+def test_info_printout():
+    pi.pi()
+
+
 def test_what_variable():
     a = 1
     pi.what(a)

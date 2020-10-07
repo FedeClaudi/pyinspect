@@ -2,6 +2,7 @@ from rich.table import Table
 from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
+from rich.markdown import Markdown
 
 from pyinspect.utils import timestamp
 from pyinspect._colors import (
@@ -31,6 +32,7 @@ class BasePanel:
     accent = white
     dim = gray
     _type = "Message"
+    width = 50
 
     def __init__(self, title, msg=None):
         """
@@ -65,7 +67,7 @@ class BasePanel:
             tb.add_row(f"[{self.color}]{self.msg}")
 
         yield Panel.fit(
-            tb, width=50, border_style=self.dim, padding=(0, 2, 1, 2)
+            tb, width=self.width, border_style=self.dim, padding=(0, 2, 1, 2)
         )
         yield f"[dim {self.color}]{self._info()}"
 
@@ -88,6 +90,7 @@ class Report(BasePanel):
     _dim = gray
     _syntax_theme = Monokai
     _type = None
+    width = 88
 
     def __init__(self, title=None, color=None, accent=None, dim=None):
         BasePanel.__init__(self, title)
@@ -106,12 +109,15 @@ class Report(BasePanel):
             self.tb.add_row("")  # spacer
 
     def _add_text(self, obj, **kwargs):
-        self.tb.add_row(Text.from_markup(obj))
+        self.tb.add_row(Text.from_markup(obj, **kwargs))
 
     def _add_code(self, obj, language="python", theme=None, **kwargs):
         if theme is None:
             theme = self._syntax_theme
         self.tb.add_row(Syntax(obj, lexer_name=language, theme=theme))
+
+    def _add_markdown(self, obj, **kwargs):
+        self.tb.add_row(Markdown(obj, **kwargs))
 
     def add(self, obj, *style, **kwargs):
         if not style:
@@ -123,15 +129,29 @@ class Report(BasePanel):
             self._add_text(obj, **kwargs)
         elif style == "code":
             self._add_code(obj, **kwargs)
+        elif style == "markdown":
+            self._add_markdown(obj, **kwargs)
+        elif style == "obj":
+            self.tb.add_row(obj)
         else:
             raise ValueError(f"Report add style not recognized: {style}")
+
+    def spacer(self, n=1):
+        for _ in range(n):
+            self.add("")
+
+    def line(self):
+        self.tb.add_row("─" * (self.width - 8))
 
     def __rich_console__(self, *args):
         """
             To make it work with rich's print
         """
         yield Panel.fit(
-            self.tb, width=88, border_style=self.dim, padding=(0, 2, 1, 2)
+            self.tb,
+            width=self.width,
+            border_style=self.dim,
+            padding=(0, 2, 1, 2),
         )
         yield f"[dim {self.color}]{self._info()}"
 
