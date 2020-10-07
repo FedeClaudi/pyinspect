@@ -1,6 +1,7 @@
 .vscode/
 .vscode
 workspace.py
+.google-cookie
 
 media/temp
 media/*.yml
