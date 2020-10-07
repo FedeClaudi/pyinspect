@@ -1,6 +1,6 @@
 """
     This example shows how to use pyinspect to
-    print nice, simple message panels for warning, 
+    print nice, simple message panels for warning,
     errors etc..
 """
 

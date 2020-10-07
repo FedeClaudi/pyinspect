@@ -1,6 +1,6 @@
 """
     This example shows how to use pyinspect
-    to look at what a variable is or to get 
+    to look at what a variable is or to get
     an idea of what variables are defined
     in your local scope
 """

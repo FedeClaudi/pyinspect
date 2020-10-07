@@ -61,10 +61,10 @@ def get_stackoverflow(query):
 
     out = Text.from_markup(
         f"""
-[{white}]Link to top [{lightsalmon}]Stack Overflow[/{lightsalmon}] question for the error: 
+[{white}]Link to top [{lightsalmon}]Stack Overflow[/{lightsalmon}] question for the error:
         [{ls}]{questionlink}[/{ls}]
 
-[{white}]To find more related answers on [{lightsalmon}]Stack Overflow[/{lightsalmon}], visit: 
+[{white}]To find more related answers on [{lightsalmon}]Stack Overflow[/{lightsalmon}], visit:
         [{ls}]{search_url}[/{ls}]
 """
     )

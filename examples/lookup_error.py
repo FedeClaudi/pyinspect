@@ -1,9 +1,9 @@
 """
     This tutorial shows how to use pyinspect
-    to look up an error and get links to 
+    to look up an error and get links to
     relevant answers on google and stack overflow.
 
-    Note: for this to work, you need to have 
+    Note: for this to work, you need to have
     had at least one error using pyinspect's traceback's.
     It's advisable to run the tracebacks examples first,
     just in case.
