@@ -21,6 +21,6 @@ pi.search(plt, name="subplot")
 """
     Pro tip: omit the 'name' argument to find *all* functions
 
-    Pro tip: pass 'include_class=False' to pi.search to ignore classes and 
+    Pro tip: pass 'include_class=False' to pi.search to ignore classes and
         only look for functions
 """
