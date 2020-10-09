@@ -52,6 +52,11 @@ def get_submodules(module):
     """
     Attempts to find all submodules of a given module object
     """
+    _skip = [
+        "numpy.f2py",
+        "numpy.f2py.__main__",
+        "numpy.testing.print_coercion_tables",
+    ]
     try:
         path = module.__path__
     except Exception:
@@ -63,10 +68,17 @@ def get_submodules(module):
         prefix=_name(module) + ".",
         onerror=lambda x: None,
     ):
+
+        # Some known packages cause issues
+        if modname in _skip:
+            continue
+
         try:
             modules[modname] = importlib.import_module(modname)
-        except (ImportError, OSError):
+        except Exception:
             pass
+
+    print("returning")
     return modules
 
 

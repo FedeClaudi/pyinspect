@@ -25,7 +25,7 @@ __website__ = "https://github.com/FedeClaudi/pyinspect"
 __version__ = "0.0.7rc"
 
 
-def pi():
+def whats_pi():
     """
     Prints a Report with an overview of `pyinspect`.
 
@@ -48,7 +48,7 @@ def pi():
     """
     )
 
-    rep.line()
+    rep.line(mocassin)
     rep.add("""### Info""", "markdown", style=orange)
     rep.add(
         f"[b {lightblue}]Author[/b {lightblue}]: {__author__}", justify="right"
@@ -67,13 +67,12 @@ def pi():
     )
 
     rep.spacer()
-    rep.line()
+    rep.line(mocassin)
     rep.add("""### Installation""", "markdown", style=orange)
     rep.add("pip install pyinspect", "code", language="shell")
     rep.spacer(3)
 
     rep.add("""### Features""", "markdown", style=orange)
-    rep.add("With")
     rep.add("import pyinspect as pi", "code")
 
     features = {
@@ -86,7 +85,7 @@ def pi():
 
     for txt, code in features.items():
         rep.spacer()
-        rep.add(f"[{lightorange}]" + txt)
+        rep.add(f"[{lightsalmon}]" + txt)
         rep.add(code, "code")
 
     rep.spacer()

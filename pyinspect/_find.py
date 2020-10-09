@@ -112,7 +112,10 @@ def print_funcs_table(found, module, name):
                 text = f"[{yellow}]{modname}[/{yellow}]"
 
             # add to table
-            table.add_row(str(count), f, text, str(signature(func)))
+            try:
+                table.add_row(str(count), f, text, str(signature(func)))
+            except ValueError:  # signature has problems with some builtins
+                table.add_row(str(count), f, text, "")
             count += 1
 
     st = f"black bold on {mocassin}"

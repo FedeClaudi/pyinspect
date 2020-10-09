@@ -3,7 +3,7 @@ import numpy as np
 
 
 def test_info_printout():
-    pi.pi()
+    pi.whats_pi()
 
 
 def test_what_variable():

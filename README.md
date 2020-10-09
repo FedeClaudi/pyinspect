@@ -101,7 +101,7 @@ Methods of the parent class are highlighted in a different color!
 >**PRO TIP:** if you don't pass a search name to `pyinspect.search` (e.g. `pyinspect.find(Console)`), `pyinspect.search` will print **all** functions and methods.
 
 
-## When you can't remember what a function does
+## When you can't remember what a function doesclear
 Okay, you've found the function you need, that's great. *But how does it work?*
 You could open a the file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to your terminal with a simple command:
 
@@ -114,7 +114,6 @@ pi.showme(pi.search)
 ```
 
 which yields:
-<!--! # TODO update -->
 
 <img src='media/print_function.png' width=800px></img>
 
@@ -142,7 +141,6 @@ a + c  # this will give an error
 ```
 
 and this is the traceback:
-<!-- ! #  TODO update -->
 
 <img src='media/traceback.png' width=800px></img>
 
@@ -171,7 +169,8 @@ Either way, you get 3 things:
 Check it out:
 
 
-<!-- ! #  TODO add image -->
+<img src='media/why.png' width=800px></img>
+
 
 ## When you got a question, ask Google
 Ever found yourself googling the same basic command over and over because you keep forgetting what the syntax is?
@@ -198,8 +197,7 @@ pi.warn('This is a warning', 'Ooops, something might be wrong!')
 pi.ok('You got this!', 'Panels are simple, but nice. Checkout `pyinspect.panels` to see what other kind of panels there are!')
 ```
 
-<!-- ! #  TODO make -->
-
+<img src='media/panels.png' width=800px></img>
 
 
 ## Contributing

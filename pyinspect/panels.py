@@ -140,8 +140,8 @@ class Report(BasePanel):
         for _ in range(n):
             self.add("")
 
-    def line(self):
-        self.tb.add_row("─" * (self.width - 8))
+    def line(self, color="#ffffff"):
+        self.tb.add_row(f"[{color}]─" * (self.width - 8))
 
     def __rich_console__(self, *args):
         """
