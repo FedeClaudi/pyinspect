@@ -176,7 +176,7 @@ Using it is fairly simple:
 pi.ask("python Concatenate two lists?")
 ```
 
-<img src='media/ask.png' width=800px></img>
+<img src='media/ask.png'></img>
 
 ## When you... 
 `pyinspect` as still a few useful features you might find yourself using from time to time. One of our favourites is `panels`: a simple why to print neat messages to terminal, for when you need to communicate with your users.
