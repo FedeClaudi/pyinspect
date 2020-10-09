@@ -25,13 +25,13 @@ An example of how `pyinspect` can be used to find and inspect functions lazily.
 
 # Table of Contents 
 1. [Installing pyinspect](https://github.com/FedeClaudi/pyinspect#installing-pyinspect)
-2. [When you can't remember a variable's name...]((https://github.com/FedeClaudi/pyinspect#finding-functions))
-3. [When you can't remember a function's name...](https://github.com/FedeClaudi/pyinspect#finding-functions)
-4. [When you can't remember what a function does](https://github.com/FedeClaudi/pyinspect#inspecting-functions)
-5. [When you can't fix that bug...](https://github.com/FedeClaudi/pyinspect#tracebacks)
+2. [When you can't remember a variable's name...](https://github.com/FedeClaudi/pyinspect#when-you-cant-remember-a-variables-name)
+3. [When you can't remember a function's name...](https://github.com/FedeClaudi/pyinspect#when-you-cant-remember-a-functions-name)
+4. [When you can't remember what a function does](https://github.com/FedeClaudi/pyinspect#when-you-cant-remember-what-a-function-does)
+5. [When you can't fix that bug...](https://github.com/FedeClaudi/pyinspect#when-you-cant-fix-that-bug)
 6. [When you **still** can't fix that bug...](https://github.com/FedeClaudi/pyinspect#tracebacks)
-7. [When you got a question, ask Google](https://github.com/FedeClaudi/pyinspect#tracebacks)
-8. [When you... ](https://github.com/FedeClaudi/pyinspect#tracebacks)
+7. [When you got a question, ask Google](https://github.com/FedeClaudi/pyinspect#when-you-got-a-question-ask-google)
+8. [When you... ](https://github.com/FedeClaudi/pyinspect#when-you)
 
 ## Installing pyinspect
 It's as simple as:
@@ -96,7 +96,7 @@ Methods of the parent class are highlighted in a different color!
 >**PRO TIP:** if you don't pass a search name to `pyinspect.search` (e.g. `pyinspect.find(Console)`), `pyinspect.search` will print **all** functions and methods.
 
 
-## When you can't remember what a function doesclear
+## When you can't remember what a function does
 Okay, you've found the function you need, that's great. *But how does it work?*
 You could open a the file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to your terminal with a simple command:
 
