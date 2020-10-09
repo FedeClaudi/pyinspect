@@ -15,7 +15,7 @@ requirements = [
 
 setup(
     name="pyinspect",
-    version="0.0.7rc",  # change __version__ too
+    version="0.0.8rc",  # change __version__ too
     description="Find and inspect python functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
