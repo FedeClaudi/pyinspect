@@ -1,11 +1,12 @@
-from rich import print
-from rich.syntax import Syntax
 from rich.console import Console
 from rich.text import Text
 from pprint import PrettyPrinter
 import pkgutil
 import importlib
 from pathlib import Path
+import ast
+import requests
+
 
 import inspect
 from inspect import (
@@ -16,62 +17,15 @@ from inspect import (
     isclass,
     getsource,
     isbuiltin,
+    getdoc,
 )
 import time
 import functools
 
 from io import StringIO
 
-from pyinspect._colors import mocassin
 
-
-def showme(func):
-    """
-        Given a pointer to a python function, it prints the code of the function. 
-
-        :param func: pointer to a python function
-    """
-    if isbuiltin(func):
-        print(
-            f'[black on {mocassin}]`showme` currently does not work with builtin functions like "{_name(func)}", sorry. '
-        )
-        return False
-    if not (isfunction(func) or isclass(func) or ismethod(func)):
-        print(
-            f'[black on {mocassin}]`showme` only accepts functions and classes, not "{_class_name(func)}", sorry. '
-        )
-        return False
-
-    # Print source class
-    class_obj = get_class_that_defined_method(func)
-
-    output = []
-    if class_obj is not None:
-        output.append(
-            f"\n[bold green] Method [yellow]{_name(func)}[/yellow] from class [magenta]{_name(class_obj)}[/magenta]"
-        )
-
-        output.append(
-            Syntax(
-                getsource(class_obj),
-                lexer_name="python",
-                line_range=(0, 5),
-                line_numbers=True,
-            )
-        )
-        output.append("\nmethod code:")
-    else:
-        output.append(
-            f"\n[bold]Function [yellow]{_name(func)}[/yellow] from [blue]{_module(func)}[/blue]\n"
-        )
-
-    print(
-        *output,
-        Syntax(getsource(func), lexer_name="python", line_numbers=True),
-    )
-
-    return True
-
+from pyinspect._rich import console
 
 # ---------------------------------------------------------------------------- #
 #                                    OBJECTS                                   #
@@ -96,8 +50,13 @@ def _module(obj):
 
 def get_submodules(module):
     """
-        Attempts to find all submodules of a given module object
+    Attempts to find all submodules of a given module object
     """
+    _skip = [
+        "numpy.f2py",
+        "numpy.f2py.__main__",
+        "numpy.testing.print_coercion_tables",
+    ]
     try:
         path = module.__path__
     except Exception:
@@ -105,22 +64,30 @@ def get_submodules(module):
 
     modules = {_name(module): module}
     for importer, modname, ispkg in pkgutil.walk_packages(
-        path=path, prefix=_name(module) + ".", onerror=lambda x: None,
+        path=path,
+        prefix=_name(module) + ".",
+        onerror=lambda x: None,
     ):
+
+        # Some known packages cause issues
+        if modname in _skip:
+            continue
+
         try:
             modules[modname] = importlib.import_module(modname)
-        except (ImportError, OSError):
+        except Exception:
             pass
+
     return modules
 
 
 def get_class_that_defined_method(meth):
     """
-        Given a reference to some classes' method, 
-        this function returns the class the method
-        belongs to.
+    Given a reference to some classes' method,
+    this function returns the class the method
+    belongs to.
 
-        :param meth: method object.
+    :param meth: method object.
     """
     if isinstance(meth, functools.partial):
         return get_class_that_defined_method(meth.func)
@@ -155,7 +122,7 @@ def get_class_that_defined_method(meth):
 # ---------------------------------------------------------------------------- #
 def read_single_line(fpath, lineno):
     """
-        Read a single line from a given path
+    Read a single line from a given path
     """
     if not isinstance(lineno, int):
         raise ValueError(
@@ -176,8 +143,8 @@ def read_single_line(fpath, lineno):
 def textify(obj, maxlen=31):
     pretty = PrettyPrinter(compact=True)
     buf = StringIO()
-    console = Console(file=buf, force_jupyter=False)
-    console.print(pretty.pformat(obj))
+    _console = Console(file=buf, force_jupyter=False)
+    _console.print(pretty.pformat(obj))
 
     out = buf.getvalue()
 
@@ -187,21 +154,24 @@ def textify(obj, maxlen=31):
     return Text(out)
 
 
-def timestamp():
+def timestamp(just_time=False):
     """
-        Returns a formatted timestamp
+    Returns a formatted timestamp
     """
-    return time.strftime("%y%m%d_%H%M%S")
+    if not just_time:
+        return time.strftime("%y%m%d_%H%M%S")
+    else:
+        return time.strftime("%H:%M:%S")
 
 
 def clean_doc(doc, maxn=47):
     """
-        Cleans a docstring and shortens it if necessary + appends and ellips
+    Cleans a docstring and shortens it if necessary + appends and ellips
 
-        :param doc: str, string with docstring
-        :param maxn: int, docstrings longer than maxn will be truncated
+    :param doc: str, string with docstring
+    :param maxn: int, docstrings longer than maxn will be truncated
 
-        :returns: str
+    :returns: str
     """
     if doc is None:
         return ""
@@ -211,3 +181,68 @@ def clean_doc(doc, maxn=47):
             return doc[:maxn] + "..."
         else:
             return doc
+
+
+def get_end_of_doc_lineno(obj):
+    """
+    Given a class or a function it returns the number
+    of the line at which the docstring ends
+    """
+    # check argument
+    if not isclass(obj) and not (isfunction(obj) or isbuiltin(obj)):
+        raise ValueError(
+            f"get_end_of_doc_lineno expects a class or a function as input, not {_class_name(obj)}"
+        )
+
+    # Check docstring
+    if getdoc(obj) is None:
+        return None
+
+    root = ast.parse(getsource(obj))
+    for node in ast.walk(root):
+        if isinstance(node, (ast.FunctionDef, ast.ClassDef, ast.Module)):
+
+            if (
+                node.body
+                and isinstance(node.body[0], ast.Expr)
+                and isinstance(node.body[0].value, ast.Str)
+            ):
+
+                return node.body[0].value.lineno
+
+
+# ---------------------------------------------------------------------------- #
+#                                   WEB STUFF                                  #
+# ---------------------------------------------------------------------------- #
+
+
+def connected_to_internet(url="http://www.google.com/", timeout=5):
+    """
+    Check that there is an internet connection
+    :param url: url to use for testing (Default value = 'http://www.google.com/')
+    :param timeout:  timeout to wait for [in seconds] (Default value = 5)
+    """
+
+    try:
+        _ = requests.get(url, timeout=timeout)
+        return True
+    except requests.ConnectionError:
+        return False
+
+
+def warn_on_no_connection(func):
+    """
+    Decorator to avoid running a function when there's no internet
+    """
+
+    def inner(*args, **kwargs):
+        if not connected_to_internet():
+            console.print(
+                "No internet connection found.",
+                f"Can't proceed with the function: {_name(func)}.",
+                sep="\n",
+            )
+        else:
+            return func(*args, **kwargs)
+
+    return inner

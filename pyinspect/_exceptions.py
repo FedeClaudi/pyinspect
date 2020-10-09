@@ -11,8 +11,22 @@ import inspect
 from collections import namedtuple
 import numpy as np
 
-from pyinspect.utils import textify, read_single_line, _class_name
-from pyinspect._colors import lightgray, yellow, lilla, salmon
+from pyinspect.utils import (
+    textify,
+    read_single_line,
+    _class_name,
+    _module,
+    _name,
+    _class,
+)
+from pyinspect._colors import (
+    lightgray,
+    yellow,
+    lilla,
+    salmon,
+    Monokai,
+    lightgreen,
+)
 
 PANEL_WIDTH = 125
 local = namedtuple("local", "key, obj, type, info, eline")
@@ -20,8 +34,8 @@ local = namedtuple("local", "key, obj, type, info, eline")
 
 def _print_object(obj):
     """
-        Returns a coincise and pretty print
-        of any object
+    Returns a coincise and pretty print
+    of any object
     """
     highlighter = ReprHighlighter()
 
@@ -46,12 +60,69 @@ def _print_object(obj):
         )
 
 
-def render_scope(synt, scope, *, title=None, relevant_only=False):
+def _get_type_color(_type):
+    # get type color
+    if "function" in _type:
+        type_color = yellow
+    elif "module" in _type:
+        type_color = lilla
+    elif "type" in _type:
+        type_color = salmon
+    else:
+        type_color = lightgreen
+    return type_color
+
+
+def _get_type_info(obj, all_locals=False):
+    mod = _module(_class(obj))
+    name = _name(_class(obj))
+    _type = f"{mod}.{name}"
+
+    # Check if object should be included
+    if not all_locals:
+        # Skip a bunch of stuff
+        if (
+            inspect.isfunction(obj)
+            or inspect.ismodule(obj)
+            or inspect.isbuiltin(obj)
+            or "function" in name
+            or "module" in name
+            or "type" in name
+        ):
+            return None, None, None
+
+    # Get some additional info
+    if isinstance(obj, np.ndarray):
+        try:
+            info = f"[#808080]Shape: {obj.shape} max: {obj.max()} min: {obj.min()} has nan: {np.any(np.isnan(obj))}"
+        except TypeError:  # array contains non-number values
+            info = f"[#808080]Shape: {obj.shape}, contains non-number objects"
+    elif isinstance(obj, (list, tuple, str)):
+        info = f"[#808080]Length: {len(obj)}"
+    else:
+        info = ""
+
+    type_color = _get_type_color(_type)
+    formatted_type = f"[{lightgray}]{_type}".replace(".", f".[{type_color}]")
+
+    return formatted_type, info, _type
+
+
+def render_scope(
+    scope, *, synt=None, title=None, relevant_only=False, just_table=False
+):
     """
-        Creates a rich panel display a 'frame' in a traceback
-        stack. It include a clickable link to the source filepath,
-        an overview of the line causing the error and a table with
-        local variables.
+    Creates a rich panel display a 'frame' in a traceback
+    stack. It include a clickable link to the source filepath,
+    an overview of the line causing the error and a table with
+    local variables.
+
+    :param scope: dict with local variables
+    :param synt: Syntax object with a line error. optional
+    :param title: str, title of the panel showing the locals
+    :param relevant_only: bool, False. If true only the variables in the error line are passed
+    :param just_table: bool, False. If true just a table with local variabels is returned instead
+            of the complete panel
     """
 
     def sort_items(item):
@@ -102,11 +173,17 @@ def render_scope(synt, scope, *, title=None, relevant_only=False):
     items = sorted(scope.items(), key=sort_items)
 
     added_items = False  # flag to check if table is filled in
+    print_eline = False  # flat to check if we should print error line details
     if items:
         # Split items to get variables in error line
-        linevars = get_variables_in_line(items[0][1].eline)
-        in_eline = [itm for itm in items if itm[0] in linevars]
-        not_in_eline = [itm for itm in items if itm[0] not in linevars]
+        if items[0][1].eline is not None:
+            print_eline = True
+            linevars = get_variables_in_line(items[0][1].eline)
+            in_eline = [itm for itm in items if itm[0] in linevars]
+            not_in_eline = [itm for itm in items if itm[0] not in linevars]
+        else:
+            in_eline = items.copy()
+            not_in_eline = {}
 
         # Populate table
         styles = ["bold", "dim"]
@@ -138,11 +215,16 @@ def render_scope(synt, scope, *, title=None, relevant_only=False):
                 )
                 added_items = True
 
+    # return just the items table
+    if just_table:
+        return items_table
+
     # make a table with the syntax and the variables
     table = Table(box=None)
-    table.add_row("[bold white]Error line:")
-    table.add_row(synt)
-    table.add_row("")
+    if print_eline:
+        table.add_row("[bold white]Error line:")
+        table.add_row(synt)
+        table.add_row("")
 
     if added_items:
         table.add_row("[bold white]Local variables")
@@ -165,14 +247,14 @@ def inspect_traceback(
     tb, keep_frames=2, all_locals=False, relevant_only=False
 ):
     """
-        Get the whole traceback stack with 
-        locals at each frame and expand the local
-        with additional info that may be useful.
+    Get the whole traceback stack with
+    locals at each frame and expand the local
+    with additional info that may be useful.
 
-        :param tb: traceback object
-        :param keep_frames: int. Keep only the last N frames for traceback
-        :all_locals: bool, False. If True all locals (e.g. including imported modules) are shown.
-            Otherwise only variables are shown
+    :param tb: traceback object
+    :param keep_frames: int. Keep only the last N frames for traceback
+    :all_locals: bool, False. If True all locals (e.g. including imported modules) are shown.
+        Otherwise only variables are shown
     """
     # Get the whole traceback stack
     while True:
@@ -208,6 +290,7 @@ def inspect_traceback(
             line_numbers=True,
             line_range=[f.f_lineno, f.f_lineno],
             code_width=PANEL_WIDTH,
+            theme=Monokai,
         )
 
         # make clickable filepath
@@ -217,46 +300,15 @@ def inspect_traceback(
         # Get locals
         locs = {}
         for k, v in f.f_locals.items():
-            mod = v.__class__.__module__
-            name = v.__class__.__name__
-            _type = f"{mod}.{name}"
-
-            # Check if object should be included
-            if not all_locals:
-                # Skip a bunch of stuff
-                if (
-                    inspect.isfunction(v)
-                    or inspect.ismodule(v)
-                    or inspect.isbuiltin(v)
-                    or "function" in name
-                    or "module" in name
-                    or "type" in name
-                ):
-                    continue
-
-            # Get some additional info
-            if isinstance(v, np.ndarray):
-                info = f"[#808080]Shape: {v.shape} max: {v.max()} min: {v.min()} has nan: {np.any(np.isnan(v))}"
-            elif isinstance(v, (list, tuple, str)):
-                info = f"[#808080]Length: {len(v)}"
-            else:
-                info = ""
-
-            # get type color
-            if "function" in _type:
-                type_color = yellow
-            elif "module" in _type:
-                type_color = lilla
-            elif "." in _type:
-                type_color = salmon
-            else:
-                type_color = "white"
+            _type, info, _ = _get_type_info(v, all_locals=all_locals)
+            if _type is None:
+                continue
 
             # Store all info
             locs[k] = local(
                 k,
                 v,
-                f"[{lightgray}]{_type}".replace(".", f".[{type_color}]"),
+                _type,
                 info,
                 eline,
             )
@@ -264,14 +316,16 @@ def inspect_traceback(
         # make panel
         title = f"[i #D3D3D3]file: [bold underline]{text}[/bold underline] line {f.f_lineno}"
         panels.append(
-            render_scope(synt, locs, title=title, relevant_only=relevant_only)
+            render_scope(
+                locs, synt=synt, title=title, relevant_only=relevant_only
+            )
         )
     return panels
 
 
 def get_locals():
     """
-        Returns a rich rendering of the variables in the local scope
+    Returns a rich rendering of the variables in the local scope
     """
     caller = inspect.stack()[1]
 

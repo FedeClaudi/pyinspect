@@ -1,9 +1,10 @@
 from inspect import isclass, getsourcelines, isfunction, signature
 import inspect
 
-from rich import box, print
+from rich import box
 from rich.table import Table
 
+from pyinspect._rich import console
 from pyinspect._colors import lightgray, lightgreen, yellow, salmon, mocassin
 from pyinspect.utils import (
     clean_doc,
@@ -16,16 +17,18 @@ from pyinspect.utils import (
 
 def print_methods_table(found, class_obj, name):
     """
-        Prints a table with the methods found by search_class_method
+    Prints a table with the methods found by search_class_method
 
-        :param found: dictionary with found functions
-        :param class_obj: class obj. Where the methods where searched in
-        :param name: str, None. Query string
+    :param found: dictionary with found functions
+    :param class_obj: class obj. Where the methods where searched in
+    :param name: str, None. Query string
     """
 
     # make rich table
     table = Table(
-        show_header=True, header_style="bold magenta", box=box.SIMPLE,
+        show_header=True,
+        header_style="bold magenta",
+        box=box.SIMPLE,
     )
     table.add_column("#", style="dim", width=3, justify="center")
     table.add_column("name", style="bold " + lightgreen)
@@ -56,12 +59,17 @@ def print_methods_table(found, class_obj, name):
             module = f"[white]{_module(v)} [dim](line: {lineno})"
 
             table.add_row(
-                str(count), method_name, cs, "", module, sig,
+                str(count),
+                method_name,
+                cs,
+                "",
+                module,
+                sig,
             )
             count += 1
 
     st = f"bold black on {mocassin}"
-    print(
+    console.print(
         f"\n[{mocassin}]Looking for methods of [{st}] {_name(class_obj)} ({_module(class_obj)}) [/{st}] with query name: [{st}] {name} [/{st}]:",
         table,
     )
@@ -69,14 +77,16 @@ def print_methods_table(found, class_obj, name):
 
 def print_funcs_table(found, module, name):
     """
-        Prints a table with the functions found by search_module_function
+    Prints a table with the functions found by search_module_function
 
-        :param found: dictionary with found functions
-        :param module: module obj. Where the functions where searched in
-        :param name: str, None. Query string
+    :param found: dictionary with found functions
+    :param module: module obj. Where the functions where searched in
+    :param name: str, None. Query string
     """
     table = Table(
-        show_header=True, header_style="bold magenta", box=box.SIMPLE,
+        show_header=True,
+        header_style="bold magenta",
+        box=box.SIMPLE,
     )
     table.add_column("#", style="dim", width=3, justify="center")
     table.add_column("name", style="bold " + lightgreen)
@@ -102,11 +112,14 @@ def print_funcs_table(found, module, name):
                 text = f"[{yellow}]{modname}[/{yellow}]"
 
             # add to table
-            table.add_row(str(count), f, text, str(signature(func)))
+            try:
+                table.add_row(str(count), f, text, str(signature(func)))
+            except ValueError:  # signature has problems with some builtins
+                table.add_row(str(count), f, text, "")
             count += 1
 
     st = f"black bold on {mocassin}"
-    print(
+    console.print(
         f"[{mocassin}]Looking for functions of [{st}] {_name(module)} [/{st}] with query name [{st}] {name if name else 'no-name'} [/{st}]:",
         table,
     )

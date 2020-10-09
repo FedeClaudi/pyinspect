@@ -1,6 +1,6 @@
 repos:
 -   repo: https://github.com/python/black
-    rev: 19.10b0
+    rev: 20.8b1
     hooks:
     - id: black
       pass_filenames: true
@@ -11,12 +11,10 @@ repos:
     - id: flake8
       pass_filenames: true
       # this seems to need to be here in addition to setup.cfg
-      exclude: __init__.py, setup.py
-- repo: https://github.com/hadialqattan/pycln
-  rev: v0.0.1-alpha.2 # Possible releases: https://github.com/hadialqattan/pycln/tags
-  hooks:
-    - id: pycln
-      args: [--config=pyproject.toml]
+      exclude: __init__.py, setup.py, tests/test_what.py
+      args: ['--config=setup.cfg']
+
+
 
 - repo: local
   hooks:
