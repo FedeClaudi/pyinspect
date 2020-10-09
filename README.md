@@ -18,7 +18,7 @@
 ... and a bunch of other features to make your life easier when coding.
 
 
-[![gif](media/intro_cut.gif)](media/intro_cut.gif)
+[![gif](media/intro_cut.gif)](https://github.com/FedeClaudi/pyinspect/blob/master/media/intro_cut.gif)
 <p align="center">
 An example of how `pyinspect` can be used to find and inspect functions lazily.
 </p>
@@ -52,7 +52,7 @@ Allright, you've defined a bunch of variables and now can't remember the name or
     pi.what()  # print all local variables
 ```
 
-<img src='media/what.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/what.png' width=800px></img>
 
 
 or to look at a single variable in detail with:
@@ -77,7 +77,7 @@ pi.search(pi, name='what')
 
 This results in a table with all the function's matching your search `name`:
 
-<img src='media/find_function.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/find_function.png' width=800px></img>
 
 >**note**: search also looks for functions in sub-modules of the module given.
 e.g.  `search(matplotlib, 'plot')` will look for methods across the entire `matplotlib` library!
@@ -110,7 +110,7 @@ pi.showme(pi.search)
 
 which yields:
 
-<img src='media/print_function.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/print_function.png' width=800px></img>
 
 
 ## When you can't fix that bug...
@@ -137,7 +137,7 @@ a + c  # this will give an error
 
 and this is the traceback:
 
-<img src='media/traceback.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/traceback.png' width=800px></img>
 
 > **note**: although we defined three variables (`a`, `b`, `c`) only two where in the line causing the error (`a + c`). `pyinspect` then highlights `a` and `c` in the traceback as this is what you need to know to fix your bug. If you want `pyinspect` to **only** show the variables in the error line pass `relevant_only=True` to `pi.install_traceback()`
 
@@ -164,7 +164,7 @@ Either way, you get 3 things:
 Check it out:
 
 
-<img src='media/why.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/why.png' width=800px></img>
 
 
 ## When you got a question, ask Google
@@ -176,7 +176,7 @@ Using it is fairly simple:
 pi.ask("python Concatenate two lists?")
 ```
 
-<img src='media/ask.png'></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/ask.png'></img>
 
 ## When you... 
 `pyinspect` as still a few useful features you might find yourself using from time to time. One of our favourites is `panels`: a simple why to print neat messages to terminal, for when you need to communicate with your users.
@@ -192,7 +192,7 @@ pi.warn('This is a warning', 'Ooops, something might be wrong!')
 pi.ok('You got this!', 'Panels are simple, but nice. Checkout `pyinspect.panels` to see what other kind of panels there are!')
 ```
 
-<img src='media/panels.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/panels.png' width=800px></img>
 
 
 ## Contributing
