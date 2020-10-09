@@ -17,7 +17,6 @@
 
 ... and a bunch of other features to make your life easier when coding.
 
-<!--! # TODO update GIF -->
 
 [![gif](media/intro_cut.gif)](media/intro_cut.gif)
 <p align="center">
@@ -68,20 +67,16 @@ That's okay! You can use `pyinspect` to search for a function by its name!
 E.g. to look for functions with `sin` in their name in `numpy`:
 
 ``` python
-# import the module whose functions you're looking for
-import numpy as np
-
 # import pyinspect
 import pyinspect as pi
 
 # Find the functions you're looking for
-pyinspect.search(np, name='sin')
+pi.search(pi, name='what')
 ```
 
 
 This results in a table with all the function's matching your search `name`:
 
-<!--! # TODO update -->
 <img src='media/find_function.png' width=800px></img>
 
 >**note**: search also looks for functions in sub-modules of the module given.

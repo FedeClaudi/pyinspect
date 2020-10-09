@@ -78,7 +78,6 @@ def get_submodules(module):
         except Exception:
             pass
 
-    print("returning")
     return modules
 
 
