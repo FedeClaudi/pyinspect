@@ -64,7 +64,7 @@ or to look at a single variable in detail with:
 
 ## When you can't remember a function's name...
 That's okay! You can use `pyinspect` to search for a function by its name!
-E.g. to look for functions with `sin` in their name in `numpy`:
+E.g. to look for functions with `searc` in their name in `pyinspect`:
 
 ``` python
 # import pyinspect
