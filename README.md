@@ -64,7 +64,7 @@ or to look at a single variable in detail with:
 
 ## When you can't remember a function's name...
 That's okay! You can use `pyinspect` to search for a function by its name!
-E.g. to look for functions with `sin` in their name in `numpy`:
+E.g. to look for functions with `searc` in their name in `pyinspect`:
 
 ``` python
 # import pyinspect
@@ -83,7 +83,7 @@ This results in a table with all the function's matching your search `name`:
 e.g.  `search(matplotlib, 'plot')` will look for methods across the entire `matplotlib` library!
 
 
-`pyinspect.find` can also be used to find class attrimethodbutes. For example to look for a method with `export` in the name in `rich.console.Console`:
+`pyinspect.find` can also be used to find class methods. For example to look for a method with `export` in the name in `rich.console.Console`:
 ``` python
 pi.search(Console, 'export')
 ```
@@ -98,7 +98,7 @@ Methods of the parent class are highlighted in a different color!
 
 ## When you can't remember what a function does
 Okay, you've found the function you need, that's great. *But how does it work?*
-You could open a the file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to your terminal with a simple command:
+You could openthe file where it's defined, scroll down to it etc... but this `pyinspect`, the package for lazy programmers! Instead of going thruogh that hastle why not printing the function's code directly to your terminal with a simple command:
 
 ``` python 
 # import pyinspect
@@ -154,7 +154,7 @@ When an error comes up, `pyinspect` gives you the opportunity to automate this w
 You can do that in two ways:
 
 1. passing `enable_prompt=True` to `install_traceback`: after the error traceback a prompt will come up asking if you want to look for solutions online, type `y`. 
-2. In a terminal window use the `why` command and `pyinspect` will automatically lookup solutions to the last error you've had.
+2. In a terminal window use the `why` command and `pyinspect` will automatically lookup solutions to the last error you've had [note you need to have installed `pyinspect`'s tracebacks for it to record errors].
 
 Either way, you get 3 things:
 * A description of your error
@@ -163,9 +163,7 @@ Either way, you get 3 things:
 
 Check it out:
 
-
-<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/why.png' width=800px></img>
-
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/why.png'></img>
 
 ## When you got a question, ask Google
 Ever found yourself googling the same basic command over and over because you keep forgetting what the syntax is?
@@ -176,10 +174,16 @@ Using it is fairly simple:
 pi.ask("python Concatenate two lists?")
 ```
 
-<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/ask.png'></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/ask.png' width=800px></img>
+
+>**note**: you can also use `ask` in your terminal to lookup answers to your questions. E.g.:
+``` 
+ask "Python how to concatenate strings"
+```
+
 
 ## When you... 
-`pyinspect` as still a few useful features you might find yourself using from time to time. One of our favourites is `panels`: a simple why to print neat messages to terminal, for when you need to communicate with your users.
+`pyinspect` has a few more useful little features you might find yourself using from time to time. One of our favourites is `panels`: a simple why to print neat messages to terminal, for when you need to communicate with your users.
 
 ```python
 
@@ -194,6 +198,11 @@ pi.ok('You got this!', 'Panels are simple, but nice. Checkout `pyinspect.panels`
 
 <img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/panels.png' width=800px></img>
 
+You can also use `Reoport`, a more advanced panel which allows you to create a more structured and detailed panel:
+
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/showpi.png' width=800px></img>
+
+As an example, see how I've used `Report` to render [my CV](https://github.com/FedeClaudi/My_CV) in python.
 
 ## Contributing
 Contributions are welcome! Start a pull request if you have a change you'd like to submit or open an issue to report a bug or request a new feature to be added to `pyinspect`
