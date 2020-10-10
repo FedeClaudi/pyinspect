@@ -202,6 +202,8 @@ You can also use `Reoport`, a more advanced panel which allows you to create a m
 
 <img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/showpi.png' width=800px></img>
 
+As an example, see how I've used `Report` to render [my CV](https://github.com/FedeClaudi/My_CV) in python.
+
 ## Contributing
 Contributions are welcome! Start a pull request if you have a change you'd like to submit or open an issue to report a bug or request a new feature to be added to `pyinspect`
 
