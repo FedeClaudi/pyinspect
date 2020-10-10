@@ -163,7 +163,7 @@ Either way, you get 3 things:
 
 Check it out:
 
-<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/why.png' width=800px></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/why.png'></img>
 
 ## When you got a question, ask Google
 Ever found yourself googling the same basic command over and over because you keep forgetting what the syntax is?
@@ -174,7 +174,7 @@ Using it is fairly simple:
 pi.ask("python Concatenate two lists?")
 ```
 
-<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/ask.png'></img>
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/ask.png' width=800px></img>
 
 >**note**: you can also use `ask` in your terminal to lookup answers to your questions. E.g.:
 ``` 
