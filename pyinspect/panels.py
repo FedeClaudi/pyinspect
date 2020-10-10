@@ -165,7 +165,7 @@ class Report(BasePanel):
         """
         self.tb.add_row(Markdown(obj, **kwargs))
 
-    def _add_rich_obj(self, obj, **kwargs):
+    def _add_rich(self, obj, **kwargs):
         """
         add a rich object (e.g. a table or another panel)
         """
@@ -217,6 +217,25 @@ class Report(BasePanel):
 
         if self.show_info:
             yield f"[dim {self.color}]{self._info()}"
+
+
+class NestedPanel(Report):
+    """
+    A useful class to create Report-like panels that
+    fit nicely when nested within other Report objects
+    """
+
+    def __init__(self, *args, **kwargs):
+        Report.__init__(self, *args, **kwargs)
+        self.tb.expand = True
+
+    def __rich_console__(self, *args):
+        yield Panel(
+            self.tb,
+            expand=True,
+            border_style=self.dim,
+            padding=(0, 2, 1, 2),
+        )
 
 
 class Warning(BasePanel):

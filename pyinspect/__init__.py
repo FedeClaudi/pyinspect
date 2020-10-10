@@ -3,7 +3,7 @@ from pyinspect.exceptions import install_traceback
 from pyinspect.show import showme, what
 from pyinspect.find import search
 from pyinspect.answers import get_answers, ask
-from pyinspect.panels import ok, warn, error, message, Report
+from pyinspect.panels import ok, warn, error, message, Report, NestedPanel
 from pyinspect._rich import console
 
 from pyinspect._colors import (
@@ -13,7 +13,13 @@ from pyinspect._colors import (
     mocassin,
     lightblue,
     lightorange,
+    gray,
 )
+
+try:
+    from github import Github
+except Exception:
+    Github = None
 
 
 __author__ = "Federico Claudi"
@@ -22,7 +28,7 @@ __maintainer__ = "Federico Claudi"
 __email__ = "federicoclaudi@protonmail.com"
 __status__ = "dev"
 __website__ = "https://github.com/FedeClaudi/pyinspect"
-__version__ = "0.0.7rc"
+__version__ = "0.0.7"
 
 
 def whats_pi():
@@ -30,6 +36,7 @@ def whats_pi():
     Prints a Report with an overview of `pyinspect`.
 
     """
+    # ? Intro
     rep = Report(f"Pynspect", dim=orange, accent=orange)
     rep._type = "Pyinspect info"
     rep.width = 100
@@ -39,6 +46,7 @@ def whats_pi():
         justify="center",
     )
 
+    # Features summary
     rep.add(
         f"""
 [{salmon}]Don't remember a function's name?[/{salmon}] Use `pyinspect` to look for it. 
@@ -48,45 +56,44 @@ def whats_pi():
     """
     )
 
-    rep.line(mocassin)
-    rep.add("""### Info""", "markdown", style=orange)
-    rep.add(
-        f"[b {lightblue}]Author[/b {lightblue}]: {__author__}", justify="right"
-    )
-    rep.add(
-        f"[b {lightblue}]License[/b {lightblue}]: {__license__}",
-        justify="right",
-    )
-    rep.add(
-        f"[b {lightblue}]Version[/b {lightblue}]: {__version__}",
-        justify="right",
-    )
-    rep.add(
-        f"[b {lightblue}]Website[/b {lightblue}]: {__website__}",
-        justify="right",
+    # Package / Repo info as a nested panel
+    info = NestedPanel(color=mocassin, dim=mocassin)
+    _info = dict(
+        Author=__author__,
+        License=__license__,
+        Version=__version__,
+        Website=__website__,
     )
 
-    rep.spacer()
-    rep.line(mocassin)
-    rep.add("""### Installation""", "markdown", style=orange)
-    rep.add("pip install pyinspect", "code", language="shell")
-    rep.spacer(3)
+    if Github is not None:
+        n_stars = Github().get_repo("FedeClaudi/pyinspect").stargazers_count
 
-    rep.add("""### Features""", "markdown", style=orange)
-    rep.add("import pyinspect as pi", "code")
+        _info["Github stars"] = n_stars
+    else:
+        warn(
+            "Could not fetch repo info",
+            "Perhaps `PyGithub` is not installed?s",
+        )
+
+    for k, v in _info.items():
+        info.add(f"[b {gray}]{k}[/b {gray}]: [{orange}]{v}", justify="right")
+    rep.add(info, "rich")
+
+    # Features examples
+    rep.add("""## Features""", "markdown", style=lightsalmon)
 
     features = {
-        "Look up local variables": "pi.what()",
-        "Search functions by name": "pi.search(package, function_name)",
-        "Print source code to console": "pi.showme(function)",
-        "Enhanced tracebacks": "pi.install_traceback()",
-        "Render [i]Stack Overflow[/i] answers in the terminal": 'pi.ask("How to python?")',
+        "Look up local variables": "pinspect.what()",
+        "Search functions by name": "pinspect.search(package, function_name)",
+        "Print source code to console": "pinspect.showme(function)",
+        "Enhanced tracebacks": "pinspect.install_traceback()",
+        "Render [i]Stack Overflow[/i] answers in the terminal": 'pinspect.ask("How to python?")',
     }
 
     for txt, code in features.items():
         rep.spacer()
-        rep.add(f"[{lightsalmon}]" + txt)
-        rep.add(code, "code")
+        rep.add(f"[{gray}]" + txt, justify="center")
+        rep.add("   " + code, "code")
 
     rep.spacer()
     rep.add(f"[{lightorange}]... and a bunch of others!")
