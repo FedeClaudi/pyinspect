@@ -198,17 +198,11 @@ pi.ok('You got this!', 'Panels are simple, but nice. Checkout `pyinspect.panels`
 
 <img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/panels.png' width=800px></img>
 
-You can also use `Report`, a more advanced panel which allows you to create a more structured and detailed panel:
+You can also use `Report`, a more advanced panel which allows you to create a more structured and detailed panel (see `pi.whats_pi()`):
 
 <img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/showpi.png' width=800px></img>
 
-As an example, see how I've used `Report` to render [my CV](https://github.com/FedeClaudi/My_CV) in python or run:
-
-``` python
-    import pyinspect as pi
-
-    pi.whats_pi()
-```
+As an example, see how I've used `Report` to render [my CV](https://github.com/FedeClaudi/My_CV)
 
 ## Contributing
 Contributions are welcome! Start a pull request if you have a change you'd like to submit or open an issue to report a bug or request a new feature to be added to `pyinspect`
