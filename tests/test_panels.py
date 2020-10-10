@@ -8,3 +8,7 @@ def test_panels():
     pi.error("error", "this is a test")
 
     pi.error("error")
+
+
+def test_report():
+    pi.whats_pi()  # tests both Report and Nested Report

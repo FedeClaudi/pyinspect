@@ -1,6 +1,5 @@
 from rich.console import Console
 from rich.text import Text
-from pprint import PrettyPrinter
 import pkgutil
 import importlib
 from pathlib import Path
@@ -140,18 +139,20 @@ def read_single_line(fpath, lineno):
                 return line
 
 
-def textify(obj, maxlen=31):
-    pretty = PrettyPrinter(compact=True)
+def stringify(obj, maxlen=31):
     buf = StringIO()
     _console = Console(file=buf, force_jupyter=False)
-    _console.print(pretty.pformat(obj))
+    _console.print(obj)
 
     out = buf.getvalue()
+    if maxlen > 0:
+        if len(out) > maxlen:
+            out = out[:maxlen] + " ..."
+    return out
 
-    if len(out) > maxlen:
-        out = out[:maxlen] + " ..."
 
-    return Text(out)
+def textify(obj, maxlen=31):
+    return Text(stringify(obj, maxlen=maxlen))
 
 
 def timestamp(just_time=False):
