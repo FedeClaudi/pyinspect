@@ -25,7 +25,7 @@ from pyinspect._exceptions import (
 from pyinspect._rich import console
 
 
-def what_locals(**kwargs):
+def _what_locals(**kwargs):
     """
     Prints all variables, classes and modules in the local scope where `what` was called
     """
@@ -99,7 +99,7 @@ def what(var=None, **kwargs):
     """
 
     if var is None:
-        what_locals()
+        _what_locals()
     else:
         rinspect(var, methods=True, private=True, help=False, **kwargs)
 
@@ -107,6 +107,7 @@ def what(var=None, **kwargs):
 def showme(func):
     """
     Given a pointer to a python function, it prints the code of the function.
+    Also works for class methods
 
     :param func: pointer to a python get_class_that_defined_method
     """

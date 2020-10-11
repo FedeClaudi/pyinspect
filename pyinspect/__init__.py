@@ -17,6 +17,10 @@ from pyinspect._colors import (
     gray,
 )
 
+from rich import pretty
+
+pretty.install()
+
 try:
     from github import Github
 except Exception:

@@ -1,11 +1,14 @@
 from rich.console import Console
 from rich.text import Text
+from rich.table import Table
+from rich.highlighter import ReprHighlighter
+from rich.filesize import decimal as format_size
 import pkgutil
 import importlib
 from pathlib import Path
 import ast
 import requests
-
+import os
 
 import inspect
 from inspect import (
@@ -23,7 +26,7 @@ import functools
 
 from io import StringIO
 
-
+from pyinspect._colors import darkgray, orange, mocassin, lightorange
 from pyinspect._rich import console
 
 # ---------------------------------------------------------------------------- #
@@ -247,3 +250,104 @@ def warn_on_no_connection(func):
             return func(*args, **kwargs)
 
     return inner
+
+
+# ---------------------------------------------------------------------------- #
+#                                   FILE I/O                                   #
+# ---------------------------------------------------------------------------- #
+
+
+def dir_files(path, pattern="*"):
+    """
+    Returns all files in a directory
+    """
+    if not isinstance(path, Path):
+        raise TypeError("path must be an instance of pathlib.Path")
+
+    return [f for f in path.glob(pattern) if f.is_file()]
+
+
+def subdirs(path, pattern="*"):
+    """
+    Returns all subdirectories in a directory
+    """
+    if not isinstance(path, Path):
+        raise TypeError("path must be an instance of pathlib.Path")
+
+    return [f for f in path.glob(pattern) if f.is_dir()]
+
+
+def listdir(path, extension=None, sortby=None):
+    """
+    Prints a nicely formatted table with an overview of files
+    in a given directory
+
+    :param path: str or Path object. Path to directory being listed
+    :param extension: str. If passed files with that extension are highlighted
+    :param sortby: str, default None. How to sort items. If None items
+            are sorted alphabetically, if 'ext' or 'extension' items are
+            sorted by extension, if 'size' items are sorted by size
+
+    returns a list of files
+    """
+
+    def sort_ext(item):
+        return item.suffix
+
+    def sort_size(item):
+        return item.stat().st_size
+
+    # Check paths
+    p = Path(path)
+    if not p.is_dir():
+        raise ValueError(f"The path passed is not a directory: {path}")
+
+    # Create table
+    tb = Table(
+        box=None,
+        show_lines=None,
+        show_edge=None,
+        expand=False,
+        header_style=f"bold {mocassin}",
+    )
+    tb.add_column(header="Name")
+    tb.add_column(header="Size")
+
+    # Sort items
+    if sortby == "extension" or sortby == "ext":
+        std = sorted(dir_files(p), key=sort_ext)
+    elif sortby == "size":
+        std = sorted(dir_files(p), key=sort_size, reverse=True)
+    else:
+        std = sorted(dir_files(p))
+
+    for fl in std:
+        complete_path = str(fl)
+        parent = fl.parent.name
+        fl = fl.name
+        _fl = fl
+
+        # Format file name
+        fl = f"[{mocassin}]{fl}"
+
+        if extension is not None and fl.endswith(extension):
+            fl = f"[{orange}]{_fl}"
+            _col = orange
+            _dimcol = orange
+        else:
+            _col = lightorange
+            _dimcol = darkgray
+
+        # Get file size
+        size = format_size(os.path.getsize(_fl)).split(" ")
+
+        tb.add_row(
+            f'[link=file://"{complete_path}"][dim]{parent}/[/]' + fl,
+            f"[{_col}]" + size[0] + f"[/] [{_dimcol}]" + size[1],
+        )
+
+    console.print(
+        f"Files in {path}\n", tb, sep="\n", highlight=ReprHighlighter()
+    )
+
+    return std

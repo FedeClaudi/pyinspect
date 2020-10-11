@@ -3,6 +3,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
 from rich.markdown import Markdown
+from rich.jupyter import JupyterMixin
 
 from pyinspect.utils import timestamp
 from pyinspect._colors import (
@@ -23,7 +24,7 @@ from pyinspect._colors import (
 from pyinspect._rich import console
 
 
-class BasePanel:
+class BasePanel(JupyterMixin):
     """
     A simple panel to send messages which consist
     of a title and a message body.

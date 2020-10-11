@@ -4,6 +4,8 @@ import pytest
 import numpy
 import matplotlib
 import pandas
+import os
+from pathlib import Path
 
 
 def test_timestamp():
@@ -26,3 +28,18 @@ def test_get_submodules():
     pi.utils.get_submodules(numpy)
     pi.utils.get_submodules(matplotlib)
     pi.utils.get_submodules(pandas)
+
+
+def test_listdir():
+    pi.utils.listdir(os.curdir)
+    pi.utils.listdir(os.curdir, extension="py", sortby="ext")
+    pi.utils.listdir(os.curdir, sortby="size")
+    pi.utils.listdir(os.curdir, sortby="extensions")
+
+    with pytest.raises(TypeError):
+        pi.utils.listdir(1)
+
+    with pytest.raises(TypeError):
+        pi.utils.subdirs(os.curdir)
+
+    pi.utils.subdirs(Path(os.curdir))
