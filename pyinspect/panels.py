@@ -203,7 +203,7 @@ class Report(BasePanel):
         elif style == "rich":
             self._add_rich(obj, **kwargs)
         else:
-            raise ValueError(f"Report add style not recognized: {style}")
+            raise ValueError(f"Report add type not recognized: {style}")
 
     def spacer(self, n=1):
         """
