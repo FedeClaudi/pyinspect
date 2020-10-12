@@ -1,10 +1,37 @@
 from pyinspect import List
 import pyinspect as pi
+import pytest
+
+
+def test_tuple():
+    mytup = pi.Tuple("a, b, c")
+    assert len(mytup) == 3
+
+    filled = mytup(1, 2, 3)
+    assert len(filled) == 3
+
+    with pytest.raises(ValueError):
+        filled(1, 2)
+        filled(1, 4, 5, 6)
+
+    filled2 = mytup(2, 3, 1)
+    assert filled != filled2
+
+    filled3 = filled2.copy()
+    assert filled3 == filled2
+    assert filled3 == filled2._tuple
+
+    print(mytup)
+    print(filled)
+    pi.console.print(mytup)
+    pi.console.print(filled)
 
 
 def test_list():
     pi.List("b", "a")
     my = pi.List("a")
+    print(my)
+    pi.console.print(my)
 
     assert len(my) == 1
 
@@ -61,3 +88,7 @@ def test_list():
 
     my2 = pi.pilist("a")
     assert len(my2) == 1
+
+    assert pi.pilist("a", "c") == pi.pilist("c", "a").reverse()
+
+    sorted(my2, reverse=True)

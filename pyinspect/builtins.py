@@ -1,12 +1,175 @@
-from collections.abc import MutableMapping
+from collections.abc import MutableMapping, Reversible, Mapping
 import inspect
 from rich.pretty import Pretty
 
 from pyinspect.utils import stringify
 from pyinspect._colors import mocassin, orange
+from pyinspect._rich import console
 
 
-class List(MutableMapping):
+class TupleKeys(tuple):
+    def __init__(self, keys):
+        self._tuple = tuple(keys)
+
+    def __repr__(self):
+        return f"Tuple keys [{len(self._tuple)} keys]"
+
+    def __str__(self):
+        return f"Tuple keys [{len(self._tuple)} keys]"
+
+    def __rich_console__(self, *args):
+        yield f"[{mocassin}]Tuple keys [[{orange}]{len(self._tuple)}[/{orange}] keys]"
+
+
+class TupleValues(tuple):
+    def __init__(self, values):
+        self._tuple = tuple(values)
+
+    def __repr__(self):
+        return f"Tuple values [{len(self._tuple)} values]"
+
+    def __str__(self):
+        return f"Tuple values [{len(self._tuple)} values]"
+
+    def __rich_console__(self, *args):
+        yield f"[{mocassin}]Tuple values [[{orange}]{len(self._tuple)}[/{orange}] values]"
+
+
+class Tuple(Mapping, Reversible):
+    """
+    Tuple-Like object similar to named tuples.
+    When a Tuple object is crated a "names" string
+    should be passed to specify the name of each class attribute.
+
+    This will return a Tuple instance which can be used to create
+    namedtuples-like objects
+    """
+
+    def __init__(self, names):
+        names = names.split(", ")
+        self._keys = names.copy()
+        self.keys = TupleKeys(names.copy())
+
+        self._tuple = None
+
+    @classmethod
+    def _from_keys(cls, keys, values):
+        """
+        Returns an instance of Tuple
+        filled in with both keys and values
+        """
+        # Create instance
+        _new = cls(", ".join(keys))
+        _new.values = TupleValues(values)
+
+        # Create internal tuple
+        _new._tuple = tuple(values)
+
+        # Set attributes
+        for k, v in zip(_new._keys, values):
+            setattr(_new, k, v)
+
+        # Create a dictionary representation
+        _new.dict = {k: v for k, v in zip(_new._keys, values)}
+
+        return _new
+
+    def __call__(self, *values):
+        """
+        When an instance of Tuple is called
+        with a list of functions, __call__ returns
+        a new instance filled in with values
+        """
+        if len(values) != len(self._keys):
+            raise ValueError(
+                f"Tuple expected {len(self._keys)} values but got {len(values)} instead."
+            )
+
+        return self._from_keys(self._keys, values)
+
+    def __str__(self):
+        base = f"pyinspect.builtins.Tuple with {len(self._keys)} keys"
+        keys = (
+            f": {self._keys}"
+            if len(self._keys) < 5
+            else f': {str([k for n,k in enumerate(self._keys) if n<5])[:-1] + ", ..."}'
+        )
+        return base + keys
+
+    def __repr__(self):
+        return f"pyinspect.builtins.Tuple with {len(self._keys)} keys."
+
+    def __rich_console__(self, *args):
+        base = f"[{mocassin}]pyinspect.builtins.[green]Tuple[/green] with [{orange}]{len(self._keys)}[/{orange}] keys:"
+        keys = (
+            f"{self._keys}"
+            if len(self._keys) < 5
+            else f': {str([k for n,k in enumerate(self._keys) if n<5])[:-1] + ", ..."}'
+        )
+        yield base
+        yield Pretty(keys)
+
+    def __getattr__(self, name):
+        raise AttributeError(
+            f'pyinspect.builtins.Tuple does not have attribute "{name}".\n     Tuple keys: {self._keys}'
+        )
+
+    def __len__(self):
+        return len(self._keys)
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n < len(self._keys):
+            item = self._tuple[self.n]
+            self.n += 1
+            return item
+        else:
+            raise StopIteration
+
+    def __getitem__(self, item_index):
+        return self._tuple[item_index]
+
+    def __eq__(self, other):
+        if isinstance(other, Tuple):
+            for k, v in self.dict.items():
+                if k not in other.keys:
+                    return False
+                if other.dict[k] != v:
+                    return False
+
+            for k, v in other.dict.items():
+                if k not in self.keys:
+                    return False
+                if self.dict[k] != v:
+                    return False
+
+            return True
+        elif isinstance(other, tuple):
+            for n, v in enumerate(other):
+                if v != self.values[n]:
+                    return False
+
+            return True
+        else:
+            raise TypeError(
+                f'"==" operator not defined between objects ot type {Tuple} and {type(other)}'
+            )
+
+    def copy(self):
+        return Tuple._from_keys(self.keys, self.values)
+
+    def showkeys(self):
+        console.print(f"{len(self._keys)} keys: ", Pretty(self._keys))
+
+
+class List(MutableMapping, Reversible):
+    """
+    list-like object with better printing
+    """
+
     def __init__(self, *args):
         if len(args) == 1:
             if inspect.isgenerator(args[0]) or isinstance(args[0], list):
@@ -107,6 +270,10 @@ class List(MutableMapping):
 
     def copy(self):
         return List(*self._list)
+
+    def reverse(self):
+        self._list.reverse()
+        return self
 
 
 def pilist(*args):
