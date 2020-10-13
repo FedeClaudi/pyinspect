@@ -179,6 +179,7 @@ def _what_variable(obj, **kwargs):
 
     # Create report
     rep = Report(f"Inspecting variable: {name}", accent=salmon)
+    rep.width = 150
     rep.add("[dim]Variable content:\n[/]")
     rep.add(Pretty(obj), "rich")
     rep.spacer()

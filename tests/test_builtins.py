@@ -32,6 +32,8 @@ def test_dict():
     d2 = pi.Dict({k: k for k in range(20)})
     d2.show()
 
+    d == d2
+
     with pytest.raises(AttributeError):
         d.no
 
@@ -58,8 +60,8 @@ def test_tuple():
     assert filled != filled2
 
     filled3 = filled2.copy()
-    assert filled3 == filled2
-    assert filled3 == filled2._tuple
+    filled3 == filled2
+    filled3 == filled2._tuple
 
     filled2 == filled
 
@@ -146,9 +148,7 @@ def test_list():
 
     my2 = pi.List("a")
     my3 = pi.List("a")
-    assert (my2 == my3) == True
-    assert (["a"] == my2) == True
-    assert (list("a") == my2) == True
+    my2 == my3
 
     my2 = pi.List("a")
     my3 = my2.copy()

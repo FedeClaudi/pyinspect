@@ -134,6 +134,14 @@ class Dict(MutableMapping):
         else:
             raise StopIteration
 
+    def __eq__(self, other):
+        if isinstance(other, Dict):
+            return self._dict == other._dict
+        elif isinstance(other, dict):
+            return self._dict == dict
+        else:
+            return False
+
     @property
     def keys(self):
         return TupleKeys(self._dict.keys(), "Dict", "keys")
@@ -277,29 +285,11 @@ class Tuple(Mapping, Reversible, Enhanced):
 
     def __eq__(self, other):
         if isinstance(other, Tuple):
-            for k, v in self.dict.items():
-                if k not in other._keys:
-                    return False
-                if other.dict[k] != v:
-                    return False
-
-            for k, v in other.dict.items():
-                if k not in self._keys:
-                    return False
-                if self.dict[k] != v:
-                    return False
-
-            return True
+            return self._tuple == other._tuple
         elif isinstance(other, tuple):
-            for n, v in enumerate(other):
-                if v != self.values[n]:
-                    return False
-
-            return True
+            return self._tuple == tuple
         else:
-            raise TypeError(
-                f'"==" operator not defined between objects ot type {Tuple} and {type(other)}'
-            )
+            return False
 
     def copy(self):
         return Tuple._from_keys(self.keys, self.values)
@@ -362,15 +352,12 @@ class List(MutableMapping, Reversible, Enhanced):
             raise StopIteration
 
     def __eq__(self, other):
-        for item in self._list:
-            if item not in self._get_iterable(other):
-                return False
-
-        for item in self._get_iterable(other):
-            if item not in self._list:
-                return False
-
-        return True
+        if isinstance(other, List):
+            return self._list == other._list
+        elif isinstance(other, list):
+            return self._list == list
+        else:
+            return False
 
     def __len__(self):
         return len(self._list)
