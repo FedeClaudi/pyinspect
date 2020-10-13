@@ -45,6 +45,7 @@ lightgreen = "#9CEC74"
 
 verylightgray = "#EAEAEA"
 
+darkgray = "#A9A9A9"
 
 # syntax style
 # adaptation of: https://github.com/pygments/pygments/blob/5bd2a84bc1db0120828606c900a14276414fecdc/pygments/styles/monokai.py

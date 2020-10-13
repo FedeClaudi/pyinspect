@@ -13,7 +13,8 @@ a = "this is my variable"
 b = "this is another variable"
 
 # to inspect a single variable:
-# pi.what(a)
+my_favourite_number = 21
+pi.what(my_favourite_number)
 
 # look at all variables in the scope
 pi.what()

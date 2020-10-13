@@ -5,6 +5,9 @@ from pyinspect.find import search
 from pyinspect.answers import get_answers, ask
 from pyinspect.panels import ok, warn, error, message, Report, NestedPanel
 from pyinspect._rich import console
+from pyinspect.classes import Enhanced
+from pyinspect.builtins import List, Tuple, Dict, pilist, pidict
+
 
 from pyinspect._colors import (
     salmon,
@@ -15,6 +18,10 @@ from pyinspect._colors import (
     lightorange,
     gray,
 )
+
+from rich import pretty
+
+pretty.install()
 
 try:
     from github import Github

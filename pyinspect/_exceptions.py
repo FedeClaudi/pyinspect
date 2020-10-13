@@ -243,6 +243,22 @@ def render_scope(
     )
 
 
+def _extract_traceback_stack(tb):
+    # Get the whole traceback stack
+    while True:
+        if not tb.tb_next:
+            break
+        tb = tb.tb_next
+
+    stack = []
+    f = tb.tb_frame
+    while f:
+        stack.append(f)
+        f = f.f_back
+    stack.reverse()
+    return stack
+
+
 def inspect_traceback(
     tb, keep_frames=2, all_locals=False, relevant_only=False
 ):
@@ -257,17 +273,7 @@ def inspect_traceback(
         Otherwise only variables are shown
     """
     # Get the whole traceback stack
-    while True:
-        if not tb.tb_next:
-            break
-        tb = tb.tb_next
-
-    stack = []
-    f = tb.tb_frame
-    while f:
-        stack.append(f)
-        f = f.f_back
-    stack.reverse()
+    stack = _extract_traceback_stack(tb)
 
     if len(stack) > keep_frames:
         if keep_frames > 1:

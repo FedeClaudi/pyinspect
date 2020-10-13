@@ -1,11 +1,29 @@
 from rich.syntax import Syntax
-from rich import inspect as rinspect
+from rich._inspect import Inspect
 from rich.panel import Panel
 from rich.table import Table
+from rich.pretty import Pretty
+import numpy as np
 
-from inspect import isfunction, ismethod, isclass, getsource, isbuiltin, stack
+from inspect import (
+    isfunction,
+    ismethod,
+    isclass,
+    getsource,
+    isbuiltin,
+    stack,
+    getfile,
+    getsourcelines,
+)
 
-from pyinspect._colors import mocassin, salmon, Monokai, DimMonokai, lightblue
+from pyinspect._colors import (
+    mocassin,
+    salmon,
+    Monokai,
+    DimMonokai,
+    lightblue,
+    orange,
+)
 
 from pyinspect.utils import (
     _class_name,
@@ -23,11 +41,12 @@ from pyinspect._exceptions import (
     _get_type_color,
 )
 from pyinspect._rich import console
+from pyinspect.panels import Report
 
 
-def what_locals(**kwargs):
+def _get_local_stacks():
     """
-    Prints all variables, classes and modules in the local scope where `what` was called
+    Returns all variables in locals stack
     """
     # get relevant stack
     _stack = stack()
@@ -46,6 +65,14 @@ def what_locals(**kwargs):
         )
         for k, l in local_stack.items()
     }
+    return locs, local_stack
+
+
+def _what_locals(**kwargs):
+    """
+    Prints all variables, classes and modules in the local scope where `what` was called
+    """
+    locs, local_stack = _get_local_stacks()
     types = {
         k: _get_type_info(l, all_locals=True)[2]
         for k, l in local_stack.items()
@@ -92,6 +119,103 @@ def what_locals(**kwargs):
     )
 
 
+def _what_variable(obj, **kwargs):
+    """
+    Prints a detailed report of a variable, including
+      - name
+      - __repr__
+      - definition
+      - attributes and methods
+
+    Getting the name for builtins is tricky so it finds the
+    variable's name by scooping around in the locals stack.
+    Then it get's the corresponding locals frame's file
+    and in it it looks for the line definition of the variable.
+    """
+    # Get variable's source
+    try:
+        # if it's a function or class
+        _file = getfile(obj)
+        line_no = getsourcelines(obj)[-1]
+        name = _name(obj)
+
+    except TypeError:  # doesn't work for builtins
+        # Get all locals frames
+        locs = [s.frame for s in stack()]
+        locs = locs[::-1]  # start from most superficial and ingnore current
+
+        # look for variable in locals stack
+        for loc in locs:
+            var = [(k, v) for k, v in loc.f_locals.items() if np.all(v == obj)]
+            if var:
+                name, value = var[0]
+                try:
+                    _file = loc.f_locals["__file__"]
+                except KeyError:
+                    while True:
+                        loc = loc.f_back
+                        if not loc or loc is None:
+                            _file = ""
+
+                        if "__file__" in loc.f_locals.keys():
+                            _file = loc.f_locals["__file__"]
+                            break
+                break
+
+        # look for variable definition in the source file
+        _got_line = False
+        if _file:
+            with open(_file, "r") as source:
+                for line_no, line in enumerate(source):
+                    line = line.replace('"', "'")
+
+                    if name in line and str(value) in line:
+                        line_no += 1
+                        _got_line = True
+                        break  # We got the source line!
+
+            if not _got_line:  # failed to find obj in source code
+                _file = ""
+
+    # Create report
+    rep = Report(f"Inspecting variable: {name}", accent=salmon)
+    rep.width = 150
+    rep.add("[dim]Variable content:\n[/]")
+    rep.add(Pretty(obj), "rich")
+    rep.spacer()
+
+    # add source
+    if _file and _file.endswith(".py"):
+        rep.add(f"[dim]Defined in:[/] {_file}:[{mocassin}]{line_no}")
+        rep.add(
+            _file,
+            "code file",
+            theme=Monokai,
+            line_numbers=True,
+            line_range=[line_no - 2, line_no + 2],
+            highlight_lines=[line_no],
+        )
+    else:
+        rep.add(f"[{orange}]Failed to get source code for variable")
+    rep.spacer()
+
+    # add rich inspect
+    rep.add(
+        Inspect(
+            obj,
+            help=False,
+            methods=True,
+            private=True,
+            dunder=False,
+            sort=True,
+            all=False,
+        ),
+        "rich",
+    )
+
+    console.print(rep)
+
+
 def what(var=None, **kwargs):
     """
     Shows the details of a single variable or an
@@ -99,14 +223,15 @@ def what(var=None, **kwargs):
     """
 
     if var is None:
-        what_locals()
+        _what_locals()
     else:
-        rinspect(var, methods=True, private=True, help=False, **kwargs)
+        _what_variable(var, **kwargs)
 
 
 def showme(func):
     """
     Given a pointer to a python function, it prints the code of the function.
+    Also works for class methods
 
     :param func: pointer to a python get_class_that_defined_method
     """

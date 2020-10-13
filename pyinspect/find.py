@@ -127,6 +127,11 @@ def search(obj, name="", print_table=True, **kwargs):
             obj, name=name, print_table=print_table, **kwargs
         )
     else:
-        return search_module_function(
-            obj, name=name, print_table=print_table, **kwargs
-        )
+        try:
+            return search_module_function(
+                obj, name=name, print_table=print_table, **kwargs
+            )
+        except TypeError:
+            raise TypeError(
+                f"Class or module were expected, got {type(obj)} instead"
+            )

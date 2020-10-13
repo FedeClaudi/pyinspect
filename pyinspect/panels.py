@@ -3,6 +3,7 @@ from rich.panel import Panel
 from rich.syntax import Syntax
 from rich.text import Text
 from rich.markdown import Markdown
+from rich.jupyter import JupyterMixin
 
 from pyinspect.utils import timestamp
 from pyinspect._colors import (
@@ -23,7 +24,7 @@ from pyinspect._colors import (
 from pyinspect._rich import console
 
 
-class BasePanel:
+class BasePanel(JupyterMixin):
     """
     A simple panel to send messages which consist
     of a title and a message body.
@@ -157,7 +158,18 @@ class Report(BasePanel):
         """
         if theme is None:
             theme = self._syntax_theme
-        self.tb.add_row(Syntax(obj, lexer_name=language, theme=theme))
+        self.tb.add_row(
+            Syntax(obj, lexer_name=language, theme=theme, **kwargs)
+        )
+
+    def _add_code_file(self, obj, language="python", theme=None, **kwargs):
+        """
+        Add a Syntax entry to the table by parsing a file with the code
+        """
+        if theme is None:
+            theme = self._syntax_theme
+
+        self.tb.add_row(Syntax.from_path(obj, theme=theme, **kwargs))
 
     def _add_markdown(self, obj, **kwargs):
         """
@@ -184,12 +196,14 @@ class Report(BasePanel):
             self._add_text(obj, **kwargs)
         elif style == "code":
             self._add_code(obj, **kwargs)
+        elif style == "code file":
+            self._add_code_file(obj, **kwargs)
         elif style == "markdown":
             self._add_markdown(obj, **kwargs)
         elif style == "rich":
             self._add_rich(obj, **kwargs)
         else:
-            raise ValueError(f"Report add style not recognized: {style}")
+            raise ValueError(f"Report add type not recognized: {style}")
 
     def spacer(self, n=1):
         """
