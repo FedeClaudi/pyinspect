@@ -50,8 +50,22 @@ class TupleKeys(Mapping, Enhanced):
 
 
 class Dict(MutableMapping):
-    def __init__(self, **kwargs):
-        self._dict = {k: v for k, v in kwargs.items()}
+    def __init__(self, *args, **kwargs):
+        if len(args) == 1:
+            if isinstance(args[0], dict):
+                # build from dict
+                self._dict = args[0]
+            else:
+                raise ValueError(
+                    "Unrecognized imput arguments. Should be either a dict object or keyword arguments"
+                )
+        elif len(args) != 0:
+            raise ValueError(
+                "Unrecognized imput arguments. Should be either a dict object or keyword arguments"
+            )
+        else:
+            # build from kwargs
+            self._dict = {k: v for k, v in kwargs.items()}
 
     def __repr__(self):
         return f"pyinspect.builtins.Dict with {len(self)} items."
@@ -140,7 +154,7 @@ class Dict(MutableMapping):
     def items(self):
         return ((k, v) for k, v in self._dict.items())
 
-    def show(self):
+    def show(self, n_rows=15):
         """ Renders a rich table with dict contents """
         tb = Table(
             box=box.SIMPLE,
@@ -162,8 +176,12 @@ class Dict(MutableMapping):
             header="value", header_style="yellow", justify="center", width=30
         )
 
-        for k, v in self.items:
+        for n, (k, v) in enumerate(self.items):
             tb.add_row(f"[{orange}]{k}", f"[{mocassin}]{v}")
+
+            if n == n_rows:
+                tb.add_row("truncated at", f"{n_rows} rows...")
+                break
 
         console.print(tb)
 
