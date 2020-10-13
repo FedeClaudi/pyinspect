@@ -1,41 +1,174 @@
 from collections.abc import MutableMapping, Reversible, Mapping
 import inspect
 from rich.pretty import Pretty
+from rich._inspect import Inspect
+from rich.table import Table
+from rich import box
 
-from pyinspect.utils import stringify
-from pyinspect._colors import mocassin, orange
+from pyinspect.utils import stringify, textify
+from pyinspect._colors import mocassin, orange, green
 from pyinspect._rich import console
+from pyinspect.classes import Enhanced
 
 
-class TupleKeys(tuple):
-    def __init__(self, keys):
+def pilist(*args):
+    return List(*args)
+
+
+class TupleKeys(Mapping, Enhanced):
+    def __init__(self, keys, ctype="", dtype=""):
         self._tuple = tuple(keys)
+        self.ctype = ctype
+        self.dtype = dtype
 
     def __repr__(self):
-        return f"Tuple keys [{len(self._tuple)} keys]"
+        return f"{self.ctype} {self.dtype} [{len(self._tuple)} {self.dtype}]"
 
     def __str__(self):
-        return f"Tuple keys [{len(self._tuple)} keys]"
+        return f"{self.ctype} {self.dtype} [{len(self._tuple)} {self.dtype}]"
 
     def __rich_console__(self, *args):
-        yield f"[{mocassin}]Tuple keys [[{orange}]{len(self._tuple)}[/{orange}] keys]"
+        yield f"[{green}]{self.ctype}[/{green}] [{mocassin}]{self.dtype} [[{orange}]{len(self._tuple)}[/{orange}] {self.dtype}]"
+
+    def __len__(self):
+        return len(self._tuple)
+
+    def __getitem__(self, item_index):
+        return self._tuple[item_index]
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n < len(self._tuple):
+            item = self._tuple[self.n]
+            self.n += 1
+            return item
+        else:
+            raise StopIteration
 
 
-class TupleValues(tuple):
-    def __init__(self, values):
-        self._tuple = tuple(values)
+class Dict(MutableMapping):
+    def __init__(self, **kwargs):
+        self._dict = {k: v for k, v in kwargs.items()}
 
     def __repr__(self):
-        return f"Tuple values [{len(self._tuple)} values]"
+        return f"pyinspect.builtins.Dict with {len(self)} items."
 
     def __str__(self):
-        return f"Tuple values [{len(self._tuple)} values]"
+        return f"pyinspect.builtins.Dict with {len(self)} items."
 
     def __rich_console__(self, *args):
-        yield f"[{mocassin}]Tuple values [[{orange}]{len(self._tuple)}[/{orange}] values]"
+        yield f"[{green}]pyinspect.builtins.Dict[/{green}][{mocassin}] with [{orange}]{len(self)}[/{orange}] items."
+
+    def __getattr__(self, key):
+        """
+        Getting an attribute that doesn't exist
+        returns the _dict entry with the same name as the attr.
+        """
+        try:
+            return self._dict[key]
+        except KeyError:
+            if key == "__rich__":
+                return
+
+            inspect = Inspect(
+                self,
+                help=False,
+                methods=True,
+                private=True,
+                dunder=False,
+                sort=True,
+                all=False,
+            )
+            console.print(inspect)
+            raise AttributeError(
+                textify(
+                    stringify(
+                        f"Attribute [bold red]{key}[/bold red] does not exist in pyinspect.builtins.Dict.\n"
+                        + "Scroll up to see the attributes in pyinspect.builtins.Dict.",
+                        maxlen=-1,
+                    ),
+                    maxlen=-1,
+                )
+            )
+
+    def __setattr__(self, key, value):
+        """
+        Setting an attribute updates the
+        dictionary content
+        """
+        if "_dict" in self.__dict__.keys():
+            self.__dict__["_dict"][key] = value
+        else:
+            self.__dict__[key] = value
+
+    def __delitem__(self, key):
+        del self._dict[key]
+
+    def __getitem__(self, key):
+        return self._dict[key]
+
+    def __len__(self):
+        return len(self._dict)
+
+    def __setitem__(self, key, value):
+        self._dict[key] = value
+
+    def __iter__(self):
+        self.n = 0
+        return self
+
+    def __next__(self):
+        if self.n < len(self._keys):
+            item = self._tuple[self.n]
+            self.n += 1
+            return item
+        else:
+            raise StopIteration
+
+    @property
+    def keys(self):
+        return TupleKeys(self._dict.keys(), "Dict", "keys")
+
+    @property
+    def values(self):
+        return TupleKeys(self._dict.values(), "Dict", "values")
+
+    @property
+    def items(self):
+        return ((k, v) for k, v in self._dict.items())
+
+    def show(self):
+        """ Renders a rich table with dict contents """
+        tb = Table(
+            box=box.SIMPLE,
+            title="Dict content",
+            title_style="magenta",
+            show_lines=True,
+            show_edge=True,
+            show_footer=True,
+            footer_style="dim",
+        )
+        tb.add_column(
+            header="key",
+            header_style="yellow",
+            justify="center",
+            footer=f"{len(self)} entries",
+            width=20,
+        )
+        tb.add_column(
+            header="value", header_style="yellow", justify="center", width=30
+        )
+
+        for k, v in self.items:
+            tb.add_row(f"[{orange}]{k}", f"[{mocassin}]{v}")
+
+        console.print(tb)
 
 
-class Tuple(Mapping, Reversible):
+class Tuple(Mapping, Reversible, Enhanced):
     """
     Tuple-Like object similar to named tuples.
     When a Tuple object is crated a "names" string
@@ -48,7 +181,7 @@ class Tuple(Mapping, Reversible):
     def __init__(self, names):
         names = names.split(", ")
         self._keys = names.copy()
-        self.keys = TupleKeys(names.copy())
+        self.keys = TupleKeys(names.copy(), "Tuple", "keys")
 
         self._tuple = None
 
@@ -60,7 +193,7 @@ class Tuple(Mapping, Reversible):
         """
         # Create instance
         _new = cls(", ".join(keys))
-        _new.values = TupleValues(values)
+        _new.values = TupleKeys(values, "Tuple", "values")
 
         # Create internal tuple
         _new._tuple = tuple(values)
@@ -165,7 +298,7 @@ class Tuple(Mapping, Reversible):
         console.print(f"{len(self._keys)} keys: ", Pretty(self._keys))
 
 
-class List(MutableMapping, Reversible):
+class List(MutableMapping, Reversible, Enhanced):
     """
     list-like object with better printing
     """
@@ -196,7 +329,7 @@ class List(MutableMapping, Reversible):
 
     def __rich_console__(self, *args):
         n = len(self._list)
-        yield f'[{mocassin}]List containing [{orange}]{n}[/{orange}] item{"s" if n != 1 else ""}{":" if n > 0 else "."}'
+        yield f'[{green}]pyinspect.builtins.List[/{green}] [{mocassin}]containing [{orange}]{n}[/{orange}] item{"s" if n != 1 else ""}{":" if n > 0 else "."}'
         if n > 0:
             yield Pretty(self._list)
 
@@ -274,7 +407,3 @@ class List(MutableMapping, Reversible):
     def reverse(self):
         self._list.reverse()
         return self
-
-
-def pilist(*args):
-    return List(*args)

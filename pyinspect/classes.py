@@ -1,5 +1,6 @@
 from rich._inspect import Inspect
 from pyinspect.utils import _class_name, stringify, textify
+from pyinspect._rich import console
 
 
 class Enhanced:
@@ -41,9 +42,12 @@ class Enhanced:
         Raises a AttributeError but also shows the attributes
         that *do* exist.
         """
+        if attr == "__rich__":
+            return None
+
         inspect = Inspect(
             self,
-            help=True,
+            help=False,
             methods=True,
             private=True,
             dunder=True if "__" in attr else False,
@@ -51,11 +55,14 @@ class Enhanced:
             all=False,
         )
 
+        console.print(inspect)
         raise AttributeError(
             textify(
-                f"Attribute [bold red]{attr}[/bold red] does not exist in {_class_name(self)}.\n"
-                + f"These are the attributes in {_class_name(self)}:\n",
+                stringify(
+                    f"Attribute [bold red]{attr}[/bold red] does not exist in {_class_name(self)}.\n"
+                    + f"Scroll up to see the attributes in {_class_name(self)}.\n",
+                    maxlen=-1,
+                ),
                 maxlen=-1,
             )
-            + stringify(inspect, maxlen=-1),
         )

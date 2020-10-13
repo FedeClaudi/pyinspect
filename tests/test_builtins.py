@@ -26,6 +26,22 @@ def test_tuple():
     pi.console.print(mytup)
     pi.console.print(filled)
 
+    mytup2 = pi.Tuple("a, b, c, d, e, f, g")
+    print(mytup2)
+
+
+def test_list_maker():
+    l = pi.list(1, 2, 3)
+    assert len(l) == 3
+
+    assert pi.list("a", "c") == pi.list("c", "a").reverse()
+
+    my2 = pi.list("a", "c")
+    assert len(my2) == 2
+
+    my2 = pi.list("a")
+    assert len(my2) == 1
+
 
 def test_list():
     pi.List("b", "a")
@@ -82,13 +98,5 @@ def test_list():
     my2 = pi.List("a")
     my3 = my2.copy()
     assert (my2 == my3) == True
-
-    my2 = pi.pilist("a", "c")
-    assert len(my2) == 2
-
-    my2 = pi.pilist("a")
-    assert len(my2) == 1
-
-    assert pi.pilist("a", "c") == pi.pilist("c", "a").reverse()
 
     sorted(my2, reverse=True)
