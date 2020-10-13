@@ -57,8 +57,14 @@ Allright, you've defined a bunch of variables and now can't remember the name or
 
 or to look at a single variable in detail with:
 ``` python
+
+    my_favourite_number = 21
     pi.what(a)
 ```
+
+This will show you the variable content, where it has been defined and some of its attributes and methods. Something like:
+
+<img src='https://github.com/FedeClaudi/pyinspect/blob/master/media/what_var.png' width=800px></img>
 
 
 
