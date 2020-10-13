@@ -4,3 +4,8 @@ exclude_lines =
     def _highlight_link
     def get_stackoverflow
     return None
+    def __repr__
+    raise TypeError
+    return False 
+    raise ValueError
+    if enable_prompt:

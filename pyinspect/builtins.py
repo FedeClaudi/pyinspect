@@ -15,6 +15,10 @@ def pilist(*args):
     return List(*args)
 
 
+def pidict(**kwargs):
+    return Dict(**kwargs)
+
+
 class TupleKeys(Mapping, Enhanced):
     def __init__(self, keys, ctype="", dtype=""):
         self._tuple = tuple(keys)
@@ -51,6 +55,7 @@ class TupleKeys(Mapping, Enhanced):
 
 class Dict(MutableMapping):
     def __init__(self, *args, **kwargs):
+        self.__n = 0
         if len(args) == 1:
             if isinstance(args[0], dict):
                 # build from dict
@@ -113,7 +118,9 @@ class Dict(MutableMapping):
         Setting an attribute updates the
         dictionary content
         """
-        if "_dict" in self.__dict__.keys():
+        if "_Dict__n" == key:
+            self.__dict__[key] = value
+        elif "_dict" in self.__dict__.keys():
             self.__dict__["_dict"][key] = value
         else:
             self.__dict__[key] = value
@@ -128,16 +135,20 @@ class Dict(MutableMapping):
         return len(self._dict)
 
     def __setitem__(self, key, value):
+        if key == "__n":
+            raise ValueError(
+                'The name "_n" for a key is reserved for the Dict class to function'
+            )
         self._dict[key] = value
 
     def __iter__(self):
-        self.n = 0
+        self.__n = 0
         return self
 
     def __next__(self):
-        if self.n < len(self._keys):
-            item = self._tuple[self.n]
-            self.n += 1
+        if self.__n < len(self):
+            item = self.keys[self.__n]
+            self.__n += 1
             return item
         else:
             raise StopIteration
@@ -286,13 +297,13 @@ class Tuple(Mapping, Reversible, Enhanced):
     def __eq__(self, other):
         if isinstance(other, Tuple):
             for k, v in self.dict.items():
-                if k not in other.keys:
+                if k not in other._keys:
                     return False
                 if other.dict[k] != v:
                     return False
 
             for k, v in other.dict.items():
-                if k not in self.keys:
+                if k not in self._keys:
                     return False
                 if self.dict[k] != v:
                     return False

@@ -20,7 +20,7 @@ def test_readsingleline():
         pi.utils.read_single_line("no path", None)
 
 
-def test_get_submodules():
+def test_submodules():
     pi.utils.get_submodules(pi)
     pi.utils.get_submodules(pi.utils)
 
@@ -28,6 +28,8 @@ def test_get_submodules():
     pi.utils.get_submodules(numpy)
     pi.utils.get_submodules(matplotlib)
     pi.utils.get_submodules(pandas)
+
+    print("done")
 
 
 def test_listdir():

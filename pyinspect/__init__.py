@@ -6,8 +6,8 @@ from pyinspect.answers import get_answers, ask
 from pyinspect.panels import ok, warn, error, message, Report, NestedPanel
 from pyinspect._rich import console
 from pyinspect.classes import Enhanced
-from pyinspect.builtins import List, Tuple, Dict
-from pyinspect.builtins import pilist as list
+from pyinspect.builtins import List, Tuple, Dict, pilist, pidict
+
 
 from pyinspect._colors import (
     salmon,
