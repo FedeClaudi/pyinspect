@@ -1,11 +1,10 @@
 from collections.abc import MutableMapping, Reversible, Mapping
 import inspect
 from rich.pretty import Pretty
-from rich._inspect import Inspect
 from rich.table import Table
 from rich import box
 
-from pyinspect.utils import stringify, textify
+from pyinspect.utils import stringify
 from pyinspect._colors import mocassin, orange, green
 from pyinspect._rich import console
 from pyinspect.classes import Enhanced
@@ -29,10 +28,10 @@ class TupleKeys(Mapping, Enhanced):
         return f"{self.ctype} {self.dtype} [{len(self._tuple)} {self.dtype}]"
 
     def __str__(self):
-        return f"{self.ctype} {self.dtype} [{len(self._tuple)} {self.dtype}]"
+        return f"{self.ctype} {self.dtype}: {self._tuple}"
 
     def __rich_console__(self, *args):
-        yield f"[{green}]{self.ctype}[/{green}] [{mocassin}]{self.dtype} [[{orange}]{len(self._tuple)}[/{orange}] {self.dtype}]"
+        yield f"[{green}]{self.ctype}[/{green}] [{mocassin}]{self.dtype} [{orange}]{(self._tuple)}[/{orange}]"
 
     def __len__(self):
         return len(self._tuple)
@@ -91,26 +90,8 @@ class Dict(MutableMapping):
         except KeyError:
             if key == "__rich__":
                 return
-
-            inspect = Inspect(
-                self,
-                help=False,
-                methods=True,
-                private=True,
-                dunder=False,
-                sort=True,
-                all=False,
-            )
-            console.print(inspect)
             raise AttributeError(
-                textify(
-                    stringify(
-                        f"Attribute [bold red]{key}[/bold red] does not exist in pyinspect.builtins.Dict.\n"
-                        + "Scroll up to see the attributes in pyinspect.builtins.Dict.",
-                        maxlen=-1,
-                    ),
-                    maxlen=-1,
-                )
+                f"Attribute [bold red]{key}[/bold red] does not exist in pyinspect.builtins.Dict."
             )
 
     def __setattr__(self, key, value):
@@ -344,7 +325,7 @@ class List(MutableMapping, Reversible, Enhanced):
 
     def __repr__(self):
         n = len(self._list)
-        info = f'List containing ]{n} item{"s" if n != 1 else ""}{":" if n > 0 else "."}'
+        info = f'List containing {n} item{"s" if n != 1 else ""}'
         return info
 
     def __str__(self):

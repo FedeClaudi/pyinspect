@@ -1,6 +1,19 @@
 import pyinspect as pi
 import sys
 import numpy as np
+from rich.console import Console
+import pytest
+
+
+def test_attribute_error():
+    c = Console()
+    a = np.zeros(3)
+
+    with pytest.raises(AttributeError):
+        c.sprint
+
+    with pytest.raises(AttributeError):
+        a.sadd
 
 
 def raise_exception():
