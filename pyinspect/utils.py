@@ -339,7 +339,7 @@ def listdir(path, extension=None, sortby=None):
             _dimcol = darkgray
 
         # Get file size
-        size = format_size(os.path.getsize(_fl)).split(" ")
+        size = format_size(os.path.getsize(complete_path)).split(" ")
 
         tb.add_row(
             f'[link=file://"{complete_path}"][dim]{parent}/[/]' + fl,
