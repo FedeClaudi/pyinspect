@@ -21,7 +21,10 @@ from pyinspect._colors import (
 
 from rich import pretty
 
-pretty.install()
+pretty.install(
+    overflow="ellipse",
+    max_length=33,
+)
 
 try:
     from github import Github

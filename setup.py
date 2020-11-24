@@ -6,7 +6,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 requirements = [
-    "rich>=8.0.0",
+    "rich>=9.2.0",
     "numpy",
     "google",
     "bs4",
@@ -15,7 +15,7 @@ requirements = [
 
 setup(
     name="pyinspect",
-    version="0.0.9rc",  # change __version__ too
+    version="0.0.9",  # change __version__ too
     description="Find and inspect python functions",
     long_description=long_description,
     long_description_content_type="text/markdown",
