@@ -11,6 +11,7 @@ requirements = [
     "google",
     "bs4",
     "click",
+    "requests"
 ]
 
 setup(
