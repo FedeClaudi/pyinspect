@@ -38,7 +38,7 @@ __maintainer__ = "Federico Claudi"
 __email__ = "federicoclaudi@protonmail.com"
 __status__ = "dev"
 __website__ = "https://github.com/FedeClaudi/pyinspect"
-__version__ = "0.0.9"
+__version__ = "0.1.1rc"
 
 
 def whats_pi():
