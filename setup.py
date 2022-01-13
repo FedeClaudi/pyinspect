@@ -6,7 +6,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
     long_description = f.read()
 
 requirements = [
-    "rich>=9.2.0",
+    "rich>=11.0.0",
     "numpy",
     "google",
     "bs4",

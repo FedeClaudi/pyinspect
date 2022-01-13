@@ -284,7 +284,7 @@ def showme(func):
                 # class definition
                 Syntax(
                     getsource(class_obj),
-                    lexer_name="python",
+                    lexer="python",
                     line_range=(0, doc_end),
                     line_numbers=True,
                     theme=DimMonokai,
@@ -301,7 +301,7 @@ def showme(func):
         *output,
         Syntax(
             getsource(func),
-            lexer_name="python",
+            lexer="python",
             line_numbers=True,
             theme=Monokai,
         ),
