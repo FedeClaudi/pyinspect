@@ -159,7 +159,7 @@ class Report(BasePanel):
         if theme is None:
             theme = self._syntax_theme
         self.tb.add_row(
-            Syntax(obj, lexer_name=language, theme=theme, **kwargs)
+            Syntax(obj, lexer=language, theme=theme, **kwargs)
         )
 
     def _add_code_file(self, obj, language="python", theme=None, **kwargs):
