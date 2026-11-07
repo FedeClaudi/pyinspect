@@ -50,7 +50,7 @@ def _get_link_so_top_answer(query):
     search_url = SO_url + "/search?" + params
 
     # query SO
-    res = requests.get(search_url)
+    res = requests.get(search_url, timeout=30)
     if not res.ok:
         return None, search_url
 
@@ -98,7 +98,7 @@ def _parse_so_top_answer(url):
     to return the formatted text of the question and top answer
     """
     # get content
-    res = requests.get(url)
+    res = requests.get(url, timeout=30)
     if not res.ok:
         return None
 
